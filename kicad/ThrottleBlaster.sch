@@ -1,0 +1,428 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title "ThrottleBlaster"
+Date ""
+Rev "0.1"
+Comp "Scrap Computing"
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L ThrottleBlaster:RaspberryPi_Pico U2
+U 1 1 65F5261C
+P 4350 5400
+F 0 "U2" V 5450 6600 50  0000 C CNN
+F 1 "RaspberryPi_Pico" V 5450 6000 50  0000 C CNN
+F 2 "ThrottleBlaster:raspberry_pi_pico" H 3650 1900 50  0001 C CNN
+F 3 "" H 3650 1900 50  0001 C CNN
+	1    4350 5400
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0103
+U 1 1 65F56C1B
+P 5950 3450
+F 0 "#PWR0103" H 5950 3200 50  0001 C CNN
+F 1 "GND" V 5955 3322 50  0000 R CNN
+F 2 "" H 5950 3450 50  0001 C CNN
+F 3 "" H 5950 3450 50  0001 C CNN
+	1    5950 3450
+	0    -1   -1   0   
+$EndComp
+$Comp
+L power:GND #PWR0104
+U 1 1 65F56E23
+P 5950 3950
+F 0 "#PWR0104" H 5950 3700 50  0001 C CNN
+F 1 "GND" V 5955 3822 50  0000 R CNN
+F 2 "" H 5950 3950 50  0001 C CNN
+F 3 "" H 5950 3950 50  0001 C CNN
+	1    5950 3950
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Device:D_Schottky D1
+U 1 1 65F5820D
+P 6100 2400
+F 0 "D1" H 6100 2617 50  0000 C CNN
+F 1 "D_Schottky" H 6100 2526 50  0000 C CNN
+F 2 "Diode_THT:D_5W_P10.16mm_Horizontal" H 6100 2400 50  0001 C CNN
+F 3 "~" H 6100 2400 50  0001 C CNN
+	1    6100 2400
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Switch:SW_Push SW1
+U 1 1 65F5C34E
+P 3050 4050
+F 0 "SW1" V 3004 4198 50  0000 L CNN
+F 1 "SW_Push" V 3095 4198 50  0000 L CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 3050 4250 50  0001 C CNN
+F 3 "~" H 3050 4250 50  0001 C CNN
+	1    3050 4050
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Device:R_POT RV1
+U 1 1 65F5DC08
+P 6900 3800
+F 0 "RV1" H 6830 3754 50  0000 R CNN
+F 1 "10K" H 6830 3845 50  0000 R CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical" H 6900 3800 50  0001 C CNN
+F 3 "~" H 6900 3800 50  0001 C CNN
+	1    6900 3800
+	-1   0    0    1   
+$EndComp
+$Comp
+L power:GND #PWR0105
+U 1 1 65F54A14
+P 6000 1650
+F 0 "#PWR0105" H 6000 1400 50  0001 C CNN
+F 1 "GND" V 6005 1522 50  0000 R CNN
+F 2 "" H 6000 1650 50  0001 C CNN
+F 3 "" H 6000 1650 50  0001 C CNN
+	1    6000 1650
+	1    0    0    -1  
+$EndComp
+NoConn ~ 5900 1650
+NoConn ~ 5800 1650
+Wire Wire Line
+	5950 3350 6100 3350
+$Comp
+L ThrottleBlaster:FloppyPower U3
+U 1 1 65F52717
+P 6200 1650
+F 0 "U3" V 5700 1400 50  0000 C CNN
+F 1 "FloppyPower" V 5800 1400 50  0000 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Horizontal" H 6200 1650 50  0001 C CNN
+F 3 "" H 6200 1650 50  0001 C CNN
+	1    6200 1650
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:Rotary_Encoder_Switch SW2
+U 1 1 65FB8E0E
+P 3450 4700
+F 0 "SW2" V 3400 4300 50  0000 L CNN
+F 1 "Rotary_Encoder_Switch" V 3500 3600 50  0000 L CNN
+F 2 "Rotary_Encoder:RotaryEncoder_Alps_EC11E-Switch_Vertical_H20mm" H 3300 4860 50  0001 C CNN
+F 3 "~" H 3450 4960 50  0001 C CNN
+	1    3450 4700
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR0107
+U 1 1 65FEE5A0
+P 4950 3950
+F 0 "#PWR0107" H 4950 3700 50  0001 C CNN
+F 1 "GND" V 4955 3822 50  0000 R CNN
+F 2 "" H 4950 3950 50  0001 C CNN
+F 3 "" H 4950 3950 50  0001 C CNN
+	1    4950 3950
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR0108
+U 1 1 65FEE9EC
+P 4950 3450
+F 0 "#PWR0108" H 4950 3200 50  0001 C CNN
+F 1 "GND" V 4955 3322 50  0000 R CNN
+F 2 "" H 4950 3450 50  0001 C CNN
+F 3 "" H 4950 3450 50  0001 C CNN
+	1    4950 3450
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR0109
+U 1 1 65FF082D
+P 3050 4250
+F 0 "#PWR0109" H 3050 4000 50  0001 C CNN
+F 1 "GND" H 3055 4077 50  0000 C CNN
+F 2 "" H 3050 4250 50  0001 C CNN
+F 3 "" H 3050 4250 50  0001 C CNN
+	1    3050 4250
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0110
+U 1 1 65FF6900
+P 6900 3950
+F 0 "#PWR0110" H 6900 3700 50  0001 C CNN
+F 1 "GND" H 6905 3777 50  0000 C CNN
+F 2 "" H 6900 3950 50  0001 C CNN
+F 3 "" H 6900 3950 50  0001 C CNN
+	1    6900 3950
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0112
+U 1 1 6601F27F
+P 3450 4400
+F 0 "#PWR0112" H 3450 4150 50  0001 C CNN
+F 1 "GND" H 3455 4227 50  0000 C CNN
+F 2 "" H 3450 4400 50  0001 C CNN
+F 3 "" H 3450 4400 50  0001 C CNN
+	1    3450 4400
+	-1   0    0    1   
+$EndComp
+$Comp
+L power:GND #PWR0113
+U 1 1 6601FACD
+P 3350 5000
+F 0 "#PWR0113" H 3350 4750 50  0001 C CNN
+F 1 "GND" H 3355 4827 50  0000 C CNN
+F 2 "" H 3350 5000 50  0001 C CNN
+F 3 "" H 3350 5000 50  0001 C CNN
+	1    3350 5000
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3550 3650 3550 4400
+Wire Wire Line
+	3350 4400 3350 3550
+Wire Wire Line
+	3700 3750 3700 5000
+Wire Wire Line
+	3700 5000 3550 5000
+Wire Wire Line
+	3050 3750 3050 3850
+Wire Wire Line
+	7300 4800 7300 4700
+$Comp
+L Device:R R1
+U 1 1 65FCF503
+P 6850 4500
+F 0 "R1" V 7057 4500 50  0000 C CNN
+F 1 "1K" V 6966 4500 50  0000 C CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 6780 4500 50  0001 C CNN
+F 3 "~" H 6850 4500 50  0001 C CNN
+	1    6850 4500
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Transistor_FET:2N7000 Q1
+U 1 1 65F5EF5A
+P 7200 4500
+F 0 "Q1" H 7404 4546 50  0000 L CNN
+F 1 "2N7000" H 7404 4455 50  0000 L CNN
+F 2 "Package_TO_SOT_THT:TO-92_Inline" H 7400 4425 50  0001 L CIN
+F 3 "https://www.onsemi.com/pub/Collateral/NDS7002A-D.PDF" H 7200 4500 50  0001 L CNN
+	1    7200 4500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6750 3850 6750 3800
+$Comp
+L power:GND #PWR0111
+U 1 1 66001E51
+P 3100 3450
+F 0 "#PWR0111" H 3100 3200 50  0001 C CNN
+F 1 "GND" V 3105 3322 50  0000 R CNN
+F 2 "" H 3100 3450 50  0001 C CNN
+F 3 "" H 3100 3450 50  0001 C CNN
+	1    3100 3450
+	0    -1   -1   0   
+$EndComp
+$Comp
+L ThrottleBlaster:7SegmentDisplayTM1637 U1
+U 1 1 65F6412F
+P 3100 3100
+F 0 "U1" H 2250 2750 50  0000 C CNN
+F 1 "7SegmentDisplayTM1637" H 2250 2850 50  0000 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical" H 3100 3100 50  0001 C CNN
+F 3 "" H 3100 3100 50  0001 C CNN
+	1    3100 3100
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3100 3250 4950 3250
+Wire Wire Line
+	3100 3350 4950 3350
+Wire Wire Line
+	6100 2550 6100 3350
+Connection ~ 3700 3750
+Wire Wire Line
+	3700 3750 3050 3750
+Wire Wire Line
+	3700 3750 4950 3750
+Wire Wire Line
+	3350 3550 4950 3550
+Wire Wire Line
+	3550 3650 4950 3650
+$Comp
+L Jumper:Jumper_2_Open JP1
+U 1 1 661001AF
+P 3950 4400
+F 0 "JP1" V 3996 4312 50  0000 R CNN
+F 1 "MODE" V 3850 4350 50  0000 R CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 3950 4400 50  0001 C CNN
+F 3 "~" H 3950 4400 50  0001 C CNN
+	1    3950 4400
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Jumper:Jumper_2_Open JP2
+U 1 1 66101426
+P 4350 4450
+F 0 "JP2" V 4396 4362 50  0000 R CNN
+F 1 "POT Enable" V 4250 4400 50  0000 R CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 4350 4450 50  0001 C CNN
+F 3 "~" H 4350 4450 50  0001 C CNN
+	1    4350 4450
+	0    -1   -1   0   
+$EndComp
+$Comp
+L power:GND #PWR01
+U 1 1 66111830
+P 3950 4600
+F 0 "#PWR01" H 3950 4350 50  0001 C CNN
+F 1 "GND" H 3955 4427 50  0000 C CNN
+F 2 "" H 3950 4600 50  0001 C CNN
+F 3 "" H 3950 4600 50  0001 C CNN
+	1    3950 4600
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR02
+U 1 1 66112007
+P 4350 4650
+F 0 "#PWR02" H 4350 4400 50  0001 C CNN
+F 1 "GND" H 4355 4477 50  0000 C CNN
+F 2 "" H 4350 4650 50  0001 C CNN
+F 3 "" H 4350 4650 50  0001 C CNN
+	1    4350 4650
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5950 3650 6900 3650
+Wire Wire Line
+	5950 3850 6600 3850
+Wire Wire Line
+	5950 4050 6400 4050
+$Comp
+L Connector:Conn_01x01_Male J1
+U 1 1 65FDF326
+P 8350 4300
+F 0 "J1" H 8322 4232 50  0000 R CNN
+F 1 "Conn_01x01_Male" H 8322 4323 50  0000 R CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x01_P2.54mm_Horizontal" H 8350 4300 50  0001 C CNN
+F 3 "~" H 8350 4300 50  0001 C CNN
+	1    8350 4300
+	-1   0    0    1   
+$EndComp
+$Comp
+L power:GND #PWR0114
+U 1 1 65FDD588
+P 7300 4800
+F 0 "#PWR0114" H 7300 4550 50  0001 C CNN
+F 1 "GND" H 7305 4627 50  0000 C CNN
+F 2 "" H 7300 4800 50  0001 C CNN
+F 3 "" H 7300 4800 50  0001 C CNN
+	1    7300 4800
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7300 4300 8150 4300
+Wire Wire Line
+	6400 4500 6700 4500
+Wire Wire Line
+	4950 3850 3950 3850
+Wire Wire Line
+	3950 3850 3950 4200
+Wire Wire Line
+	4950 4050 4350 4050
+Wire Wire Line
+	4350 4050 4350 4250
+Wire Wire Line
+	6400 4050 6400 4500
+Wire Wire Line
+	3100 3550 3300 3550
+Wire Wire Line
+	3300 3550 3300 2550
+Wire Wire Line
+	3300 2550 6100 2550
+NoConn ~ 5950 4150
+NoConn ~ 5950 4250
+NoConn ~ 5950 4350
+NoConn ~ 5950 4450
+NoConn ~ 5950 4550
+NoConn ~ 5950 4650
+NoConn ~ 5950 4750
+NoConn ~ 5950 4850
+NoConn ~ 5950 4950
+NoConn ~ 5950 5050
+NoConn ~ 5950 5150
+NoConn ~ 4950 5150
+NoConn ~ 4950 5050
+NoConn ~ 4950 4950
+NoConn ~ 4950 4850
+NoConn ~ 4950 4750
+NoConn ~ 4950 4650
+NoConn ~ 4950 4550
+NoConn ~ 4950 4450
+NoConn ~ 4950 4350
+NoConn ~ 4950 4250
+NoConn ~ 4950 4150
+NoConn ~ 5950 3750
+NoConn ~ 5950 3550
+NoConn ~ 5950 3250
+Wire Wire Line
+	6100 2050 6100 2250
+Wire Wire Line
+	6100 1650 6100 2050
+Connection ~ 6100 2050
+$Comp
+L power:+5V #PWR0106
+U 1 1 65FB6A22
+P 6100 2050
+F 0 "#PWR0106" H 6100 1900 50  0001 C CNN
+F 1 "+5V" V 6115 2178 50  0000 L CNN
+F 2 "" H 6100 2050 50  0001 C CNN
+F 3 "" H 6100 2050 50  0001 C CNN
+	1    6100 2050
+	0    1    1    0   
+$EndComp
+Connection ~ 6100 2550
+$Comp
+L power:PWR_FLAG #FLG0101
+U 1 1 6623D785
+P 6100 2550
+F 0 "#FLG0101" H 6100 2625 50  0001 C CNN
+F 1 "PWR_FLAG" V 6100 2678 50  0000 L CNN
+F 2 "" H 6100 2550 50  0001 C CNN
+F 3 "~" H 6100 2550 50  0001 C CNN
+	1    6100 2550
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:C C1
+U 1 1 65F774D8
+P 6600 4000
+F 0 "C1" H 6715 4046 50  0000 L CNN
+F 1 "100pF" H 6715 3955 50  0000 L CNN
+F 2 "Capacitor_THT:C_Disc_D3.0mm_W1.6mm_P2.50mm" H 6638 3850 50  0001 C CNN
+F 3 "~" H 6600 4000 50  0001 C CNN
+	1    6600 4000
+	1    0    0    -1  
+$EndComp
+Connection ~ 6600 3850
+Wire Wire Line
+	6600 3850 6750 3850
+$Comp
+L power:GND #PWR03
+U 1 1 65F77A5D
+P 6600 4150
+F 0 "#PWR03" H 6600 3900 50  0001 C CNN
+F 1 "GND" H 6605 3977 50  0000 C CNN
+F 2 "" H 6600 4150 50  0001 C CNN
+F 3 "" H 6600 4150 50  0001 C CNN
+	1    6600 4150
+	1    0    0    -1  
+$EndComp
+$EndSCHEMATC

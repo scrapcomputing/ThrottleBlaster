@@ -1,0 +1,3 @@
+(fp_lib_table
+  (lib (name ThrottleBlaster)(type KiCad)(uri ${KIPRJMOD}/ThrottleBlaster.pretty)(options "")(descr ""))
+)
