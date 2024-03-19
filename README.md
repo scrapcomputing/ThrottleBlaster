@@ -10,6 +10,7 @@ Videos:
 - https://www.youtube.com/watch?v=nGy8OmOe_34
 - https://www.youtube.com/watch?v=9uNml2j6sy0
 
+Download firmware (ThrottleBlaster.uf2): https://github.com/scrapcomputing/ThrottleBlaster/releases
 
 # How it works
 The Throttle Blaster is a fancy PWM controller that pulls the CPU's STPCLK# to ground.
