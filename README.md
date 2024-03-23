@@ -43,7 +43,7 @@ It is tailored to the needs of vintage PC enthusiasts, so it drives a 4-digit 7-
 ## Initial configuration
 - The default CPU frequency is 200MHz. Long push to configure the CPU speed. Select the frequency and short push to get back to the presets.
 
-# Mode 2: Single-button (BTN)
+# Mode 2: Single-button (1Btn)
 
 - The device starts at the "Presets" state.
 - Three types of push:
@@ -56,7 +56,22 @@ It is tailored to the needs of vintage PC enthusiasts, so it drives a 4-digit 7-
 <img src='img/button_states.png' height=240 width=auto>
 
 
-# Mode 3: Potentiometer (POT)
+# Mode 3: Two-button (2Btn)
+
+- The device starts at the "Presets" state.
+- Two types of push: long and short
+- Three types of actions:
+  1. Short Left or Right push (release immediately)
+  2. Both Left and Right short push
+  3. Both Left and Right long push.
+- Cycle through presets with a L or R short push.
+- Go to 1-1 manual mode with both L and R short push.
+- Long push (L or R) to enter programming mode, or to configure the CPU Frequency (CPUF) when showing the maximum frequency.
+- Reset to defaults by long press L and R twice.
+
+<img src='img/button2_states.png' height=240 width=auto>
+
+# Mode 4: Potentiometer (POT)
 
 - Can be used in conjunction with the single-button operation. Turning the potentiometer overrides the preset selected by the button.
 
@@ -64,10 +79,12 @@ It is tailored to the needs of vintage PC enthusiasts, so it drives a 4-digit 7-
 
  Display | Performance equivalence
 ---------|------------------------
- 4.77    | 4.77 MHz IBM PC
- 8       | 8 MHz XT
+ 4       | 4.77 MHz IBM PC
+ 8       | 8 MHz
+ 10      | 10 MHz
+ 25      | 25 MHz
  33      | 33 MHz 486
- 66      | 66 MHz 486 DX2
+ 66      | 66 MHz 486
  133     | 133 MHz Pentium
  450     | 450 MHz Pentium-II
  733     | 733 MHz Pentium-III

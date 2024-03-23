@@ -13,13 +13,14 @@ static constexpr const int DisplayDioGPIO = 1;
 static constexpr const int RotaryClkGPIO = 2;
 static constexpr const int RotaryDtGPIO = 3;
 static constexpr const int RotarySwGPIO = 4;
-// Button
-static constexpr const int PotentiometerButtonGPIO = RotarySwGPIO;
+// Buttons
+static constexpr const int LeftButtonGPIO = RotarySwGPIO;
+static constexpr const int RightButtonGPIO = 7;
 // Throttle pin
 static constexpr const int ThrottleGPIO = 27;
 // Jumpers
-static constexpr const int ModeJumperGPIO = 5;
-static constexpr const int PotEnableJumperGPIO = 6;
+static constexpr const int ModeJP1GPIO = 5;
+static constexpr const int ModeJP2GPIO = 6;
 // Potentiometer
 static constexpr const int PotentiometerGPIO = 28;
 
@@ -34,11 +35,14 @@ static constexpr const int MHzLimitLo = 1;
 static constexpr const int PWMLimitHi = 256;
 static constexpr const int PWMLimitLo = 1;
 
+static constexpr const int TwoBtnMaxMHzStep = 50;
+
 // Input Settings
 // After how many loop iterations we are sampling the inputs.
 // The lower the value the more responsive it is.
 static constexpr const int PotSamplePeriod = 100;
 static constexpr const int RotaryEncoderSamplePeriod = 1;
+static constexpr const int ButtonSamplePeriod = 100;
 
 // Turning the Rotary Encoder one step
 static constexpr const int RotaryMaxMHzRightStep = 50;

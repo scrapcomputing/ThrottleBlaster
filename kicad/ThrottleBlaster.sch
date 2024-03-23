@@ -6,7 +6,7 @@ encoding utf-8
 Sheet 1 1
 Title "ThrottleBlaster"
 Date ""
-Rev "0.1"
+Rev "0.2"
 Comp "Scrap Computing"
 Comment1 ""
 Comment2 ""
@@ -60,12 +60,12 @@ $EndComp
 $Comp
 L Switch:SW_Push SW1
 U 1 1 65F5C34E
-P 3050 4050
-F 0 "SW1" V 3004 4198 50  0000 L CNN
-F 1 "SW_Push" V 3095 4198 50  0000 L CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 3050 4250 50  0001 C CNN
-F 3 "~" H 3050 4250 50  0001 C CNN
-	1    3050 4050
+P 2150 4350
+F 0 "SW1" V 2104 4498 50  0000 L CNN
+F 1 "SW_Push" V 2195 4498 50  0000 L CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 2150 4550 50  0001 C CNN
+F 3 "~" H 2150 4550 50  0001 C CNN
+	1    2150 4350
 	0    -1   -1   0   
 $EndComp
 $Comp
@@ -141,12 +141,12 @@ $EndComp
 $Comp
 L power:GND #PWR0109
 U 1 1 65FF082D
-P 3050 4250
-F 0 "#PWR0109" H 3050 4000 50  0001 C CNN
-F 1 "GND" H 3055 4077 50  0000 C CNN
-F 2 "" H 3050 4250 50  0001 C CNN
-F 3 "" H 3050 4250 50  0001 C CNN
-	1    3050 4250
+P 2150 4550
+F 0 "#PWR0109" H 2150 4300 50  0001 C CNN
+F 1 "GND" H 2155 4377 50  0000 C CNN
+F 2 "" H 2150 4550 50  0001 C CNN
+F 3 "" H 2150 4550 50  0001 C CNN
+	1    2150 4550
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -190,8 +190,6 @@ Wire Wire Line
 	3700 3750 3700 5000
 Wire Wire Line
 	3700 5000 3550 5000
-Wire Wire Line
-	3050 3750 3050 3850
 Wire Wire Line
 	7300 4800 7300 4700
 $Comp
@@ -248,8 +246,6 @@ Wire Wire Line
 	6100 2550 6100 3350
 Connection ~ 3700 3750
 Wire Wire Line
-	3700 3750 3050 3750
-Wire Wire Line
 	3700 3750 4950 3750
 Wire Wire Line
 	3350 3550 4950 3550
@@ -258,46 +254,46 @@ Wire Wire Line
 $Comp
 L Jumper:Jumper_2_Open JP1
 U 1 1 661001AF
-P 3950 4400
-F 0 "JP1" V 3996 4312 50  0000 R CNN
-F 1 "MODE" V 3850 4350 50  0000 R CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 3950 4400 50  0001 C CNN
-F 3 "~" H 3950 4400 50  0001 C CNN
-	1    3950 4400
-	0    -1   -1   0   
+P 4450 3850
+F 0 "JP1" H 4496 3762 50  0000 R CNN
+F 1 "MODE" H 4350 3800 50  0000 R CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 4450 3850 50  0001 C CNN
+F 3 "~" H 4450 3850 50  0001 C CNN
+	1    4450 3850
+	1    0    0    -1  
 $EndComp
 $Comp
 L Jumper:Jumper_2_Open JP2
 U 1 1 66101426
-P 4350 4450
-F 0 "JP2" V 4396 4362 50  0000 R CNN
-F 1 "POT Enable" V 4250 4400 50  0000 R CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 4350 4450 50  0001 C CNN
-F 3 "~" H 4350 4450 50  0001 C CNN
-	1    4350 4450
-	0    -1   -1   0   
+P 4450 4050
+F 0 "JP2" H 4496 3962 50  0000 R CNN
+F 1 "POT Enable" H 4350 4000 50  0000 R CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 4450 4050 50  0001 C CNN
+F 3 "~" H 4450 4050 50  0001 C CNN
+	1    4450 4050
+	1    0    0    -1  
 $EndComp
 $Comp
 L power:GND #PWR01
 U 1 1 66111830
-P 3950 4600
-F 0 "#PWR01" H 3950 4350 50  0001 C CNN
-F 1 "GND" H 3955 4427 50  0000 C CNN
-F 2 "" H 3950 4600 50  0001 C CNN
-F 3 "" H 3950 4600 50  0001 C CNN
-	1    3950 4600
-	1    0    0    -1  
+P 4250 3850
+F 0 "#PWR01" H 4250 3600 50  0001 C CNN
+F 1 "GND" V 4255 3677 50  0000 C CNN
+F 2 "" H 4250 3850 50  0001 C CNN
+F 3 "" H 4250 3850 50  0001 C CNN
+	1    4250 3850
+	0    1    1    0   
 $EndComp
 $Comp
 L power:GND #PWR02
 U 1 1 66112007
-P 4350 4650
-F 0 "#PWR02" H 4350 4400 50  0001 C CNN
-F 1 "GND" H 4355 4477 50  0000 C CNN
-F 2 "" H 4350 4650 50  0001 C CNN
-F 3 "" H 4350 4650 50  0001 C CNN
-	1    4350 4650
-	1    0    0    -1  
+P 4250 4050
+F 0 "#PWR02" H 4250 3800 50  0001 C CNN
+F 1 "GND" V 4255 3877 50  0000 C CNN
+F 2 "" H 4250 4050 50  0001 C CNN
+F 3 "" H 4250 4050 50  0001 C CNN
+	1    4250 4050
+	0    1    1    0   
 $EndComp
 Wire Wire Line
 	5950 3650 6900 3650
@@ -332,14 +328,6 @@ Wire Wire Line
 Wire Wire Line
 	6400 4500 6700 4500
 Wire Wire Line
-	4950 3850 3950 3850
-Wire Wire Line
-	3950 3850 3950 4200
-Wire Wire Line
-	4950 4050 4350 4050
-Wire Wire Line
-	4350 4050 4350 4250
-Wire Wire Line
 	6400 4050 6400 4500
 Wire Wire Line
 	3100 3550 3300 3550
@@ -368,7 +356,6 @@ NoConn ~ 4950 4550
 NoConn ~ 4950 4450
 NoConn ~ 4950 4350
 NoConn ~ 4950 4250
-NoConn ~ 4950 4150
 NoConn ~ 5950 3750
 NoConn ~ 5950 3550
 NoConn ~ 5950 3250
@@ -424,5 +411,37 @@ F 2 "" H 6600 4150 50  0001 C CNN
 F 3 "" H 6600 4150 50  0001 C CNN
 	1    6600 4150
 	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4650 3850 4950 3850
+Wire Wire Line
+	4650 4050 4950 4050
+Wire Wire Line
+	2150 3750 2150 4150
+Wire Wire Line
+	2150 3750 3700 3750
+Wire Wire Line
+	2600 4150 4950 4150
+$Comp
+L power:GND #PWR04
+U 1 1 65F993B3
+P 2600 4550
+F 0 "#PWR04" H 2600 4300 50  0001 C CNN
+F 1 "GND" H 2605 4377 50  0000 C CNN
+F 2 "" H 2600 4550 50  0001 C CNN
+F 3 "" H 2600 4550 50  0001 C CNN
+	1    2600 4550
+	1    0    0    -1  
+$EndComp
+$Comp
+L Switch:SW_Push SW3
+U 1 1 65F988F7
+P 2600 4350
+F 0 "SW3" V 2646 4302 50  0000 R CNN
+F 1 "SW_Push" V 2555 4302 50  0000 R CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 2600 4550 50  0001 C CNN
+F 3 "~" H 2600 4550 50  0001 C CNN
+	1    2600 4350
+	0    -1   -1   0   
 $EndComp
 $EndSCHEMATC

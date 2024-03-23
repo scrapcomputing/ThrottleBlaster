@@ -12,6 +12,7 @@
 #include "Pwm.pio.h"
 #include "RotaryEncoder.h"
 #include "RotaryLogic.h"
+#include "TwoButtonLogic.h"
 #include "hardware/pio.h"
 #include <bsp/board.h>
 #include <chrono>
@@ -57,6 +58,7 @@ static void _main_loop() {
 
 enum class UIMode {
   Rotary,
+  TwoButton,
   Button,
   ButtonWithPot,
 };
@@ -65,6 +67,8 @@ const char *getUIModeStr(UIMode Mode) {
   switch (Mode) {
   case UIMode::Rotary:
     return "Rotary";
+  case UIMode::TwoButton:
+    return "TwoButton";
   case UIMode::Button:
     return "Button";
   case UIMode::ButtonWithPot:
@@ -75,11 +79,18 @@ const char *getUIModeStr(UIMode Mode) {
 
 static UIMode getUIMode(Pico &Pico) {
   Pico.readGPIO();
-  if (!Pico.getGPIO(ModeJumperGPIO))
-    return UIMode::Rotary;
-  if (!Pico.getGPIO(PotEnableJumperGPIO))
+  bool JP1 = Pico.getGPIO(ModeJP1GPIO);
+  bool JP2 = Pico.getGPIO(ModeJP2GPIO);
+  if (JP1 && JP2)
+    return UIMode::Button;
+  if (JP1 && !JP2)
     return UIMode::ButtonWithPot;
-  return UIMode::Button;
+  if (!JP1 && !JP2)
+    return UIMode::TwoButton;
+  if (!JP1 && JP2)
+    return UIMode::Rotary;
+  std::cerr << "Bad Mode!\n";
+  exit(1);
 }
 
 class ThrottlePin {
@@ -146,8 +157,13 @@ static void core0_main_loop(Pico &Pico, Display &Disp, FlashStorage &Flash,
   case UIMode::Button:
   case UIMode::ButtonWithPot:
     UI = std::make_unique<PotentiometerLogic>(
-        PotentiometerGPIO, PotentiometerButtonGPIO, PotSamplePeriod, Pico, Disp,
-        DC, Presets, Flash, /*EnablePot=*/Mode == UIMode::ButtonWithPot);
+        PotentiometerGPIO, LeftButtonGPIO, PotSamplePeriod, Pico, Disp, DC,
+        Presets, Flash, /*EnablePot=*/Mode == UIMode::ButtonWithPot);
+    break;
+  case UIMode::TwoButton:
+    UI = std::make_unique<TwoButtonLogic>(LeftButtonGPIO, RightButtonGPIO,
+                                          ButtonSamplePeriod, Pico, Disp, DC,
+                                          Presets, Flash);
     break;
   }
 
@@ -176,9 +192,8 @@ int main() {
   Pico.initGPIO(PICO_DEFAULT_LED_PIN, GPIO_OUT, Pico::Pull::Down, "LED");
   Pico.initGPIO(ThrottleGPIO, GPIO_OUT, Pico::Pull::Down, "Throttle");
 
-  Pico.initGPIO(ModeJumperGPIO, GPIO_IN, Pico::Pull::Up, "ModeJumper");
-  Pico.initGPIO(PotEnableJumperGPIO, GPIO_IN, Pico::Pull::Up,
-                "PotEnableJumper");
+  Pico.initGPIO(ModeJP1GPIO, GPIO_IN, Pico::Pull::Up, "ModeJP1");
+  Pico.initGPIO(ModeJP2GPIO, GPIO_IN, Pico::Pull::Up, "ModeJP2");
 
   Display Disp(DisplayClkGPIO, DisplayDioGPIO);
 

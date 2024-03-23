@@ -19,7 +19,7 @@ cmake_minimum_required(VERSION 3.13)
 # For example: minicom -b 115200 -D /dev/ttyACM0. Serial connection: 115200 8N1
 
 set(REVISION_MAJOR 0)
-set(REVISION_MINOR 1)
+set(REVISION_MINOR 2)
 
 message("PICO_SDK_PATH = ${PICO_SDK_PATH}")
 
@@ -29,8 +29,9 @@ message("PICO_SDK_PATH = ${PICO_SDK_PATH}")
 # note: this must happen before project()
 include(pico_sdk_import.cmake)
 
+set(PROJECT_NAME ThrottleBlaster)
 project(
-  ThrottleBlaster
+  ${PROJECT_NAME}
   LANGUAGES C CXX ASM)
 
 set(CMAKE_C_STANDARD 11)
@@ -61,11 +62,11 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -Werror ${EXTRA_DBG_FL
 
 # rest of your project
 file(GLOB SOURCES *.c *.cpp *.h *.def)
-add_executable(ThrottleBlaster ${SOURCES})
+add_executable(${PROJECT_NAME} ${SOURCES})
 
-pico_generate_pio_header(ThrottleBlaster ${CMAKE_CURRENT_LIST_DIR}/Pwm.pio)
+pico_generate_pio_header(${PROJECT_NAME} ${CMAKE_CURRENT_LIST_DIR}/Pwm.pio)
 
-target_include_directories(ThrottleBlaster PUBLIC "${CMAKE_CURRENT_LIST_DIR}")
+target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_LIST_DIR}")
 
 set(LIBS
   pico_stdlib
@@ -76,18 +77,18 @@ set(LIBS
 if (DEFINED PICO_TM1637_PATH)
   set(LIBS PicoTM1637 ${LIBS})
 endif ()
-target_link_libraries(ThrottleBlaster ${LIBS})
+target_link_libraries(${PROJECT_NAME} ${LIBS})
 
 
 message("")
 message("+---------------+")
 message("| Configuration |")
 message("+---------------+")
-pico_enable_stdio_usb(ThrottleBlaster 1)
-pico_enable_stdio_uart(ThrottleBlaster 0)
+pico_enable_stdio_usb(${PROJECT_NAME} 1)
+pico_enable_stdio_uart(${PROJECT_NAME} 0)
 if (DISABLE_USB_DBG STREQUAL "0")
-  pico_enable_stdio_usb(ThrottleBlaster 0)
-  pico_enable_stdio_uart(ThrottleBlaster 0)
+  pico_enable_stdio_usb(${PROJECT_NAME} 0)
+  pico_enable_stdio_uart(${PROJECT_NAME} 0)
 endif ()
 message("DISABLE_USB_DBG = ${DISABLE_USB_DBG}")
 
@@ -105,4 +106,4 @@ configure_file (
   )
 
 # Create map/bin/hex/uf2 in addition to ELF.
-pico_add_extra_outputs(ThrottleBlaster)
+pico_add_extra_outputs(${PROJECT_NAME})

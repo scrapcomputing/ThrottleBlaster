@@ -51,6 +51,7 @@ class PresetsTable {
   //     {1666000, 1666000, DefaultPWM}, {3200000, 3200000, DefaultPWM}};
   const std::vector<Entry> ImmutableTable = {
       {4770, 4770, DefaultPeriod},     {8000, 8000, DefaultPeriod},
+      {10000, 10000, DefaultPeriod},   {25000, 25000, DefaultPeriod},
       {33000, 33000, DefaultPeriod},   {66000, 66000, DefaultPeriod},
       {133000, 133000, DefaultPeriod}, {450000, 450000, DefaultPeriod},
       {733000, 733000, DefaultPeriod}};

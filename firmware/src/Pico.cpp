@@ -52,7 +52,7 @@ Pico::Pico() {
   // Wait for a bit otherwise this does not show up during serial debug.
   sleep_ms(500);
   std::cerr << "+---------------------------------+\n";
-  std::cerr << "|              CDBlaster          |\n";
+  std::cerr << "|          " << PROJECT_NAME << "\n";
   std::cerr << "+---------------------------------+\n";
   std::cerr << "clk_sys = " << frequency_count_khz(CLOCKS_FC0_SRC_VALUE_CLK_SYS)
             << "KHz\n";

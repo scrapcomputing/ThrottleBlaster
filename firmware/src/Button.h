@@ -13,6 +13,7 @@ enum class ButtonState {
   LongPress,
   MedRelease,
   Release,
+  Pressed,
   None,
 };
 
@@ -21,9 +22,14 @@ static constexpr const char *getButtonState(ButtonState State) {
   case ButtonState::LongPress: return "LongPress";
   case ButtonState::MedRelease: return "MedRelease";
   case ButtonState::Release: return "Release";
+  case ButtonState::Pressed: return "Pressed";
   case ButtonState::None: return "None";
   }
 }
+
+bool bothRelease(ButtonState BS1, ButtonState BS2);
+/// WARNING: Be very careful if you are handling single-button long pressess!
+bool bothLongPress(ButtonState BS1, ButtonState BS2);
 
 template <bool OffVal, int DebounceSz, int LongPressCntVal,
           int MedReleaseCntVal = LongPressCntVal / 4>
@@ -41,6 +47,7 @@ public:
     auto Pull = OffVal == true ? Pico::Pull::Up : Pico::Pull::Down;
     Pi.initGPIO(GPIO, GPIO_IN, Pull, Name);
   }
+
   ButtonState get() {
     Pi.readGPIO();
     Buff.append(Pi.getGPIO(GPIO));
@@ -49,6 +56,7 @@ public:
     auto GetState = [this](bool Val) {
       if (Val == OnVal && LastVal == OffVal) {
          LongPressCnt = 0;
+         return ButtonState::Pressed;
       } else if (Val == OffVal && LastVal == OnVal) {
         if (!IgnoreRelease) {
           if (LongPressCnt >= MedReleaseCntVal)
@@ -62,6 +70,7 @@ public:
           IgnoreRelease = true;
           return ButtonState::LongPress;
         }
+        return ButtonState::Pressed;
       }
       return ButtonState::None;
     };
