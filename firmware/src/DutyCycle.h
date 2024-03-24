@@ -11,14 +11,14 @@
 #include "ConfigOpts.h"
 
 class DutyCycle {
-  int SamplesPerMHz;
-  int Period;
-  int KHz;
+  int Period = 0;
+  int KHz = 0;
   const PresetsTable &Presets;
 
 public:
   DutyCycle(PresetsTable &Presets)
       : Period(1u << 12), KHz(Presets.getMaxKHz()), Presets(Presets) {}
+  void setMHzToMax() { setKHz(Presets.getMaxKHz()); }
   void incrMHz() {
     int Step = 1000;
     int NextKHz = (KHz / 1000) * 1000 + Step;

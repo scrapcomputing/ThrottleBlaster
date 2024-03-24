@@ -39,6 +39,7 @@ void TwoButtonLogic::cyclePresets(ButtonState LBtnState,
   case ButtonState::MedRelease:
     Presets.prev();
     DC.setKHz(Presets.getKHz());
+    DC.setPeriod(Presets.getPeriod());
     break;
   case ButtonState::LongPress:
     LongPress();
@@ -49,6 +50,7 @@ void TwoButtonLogic::cyclePresets(ButtonState LBtnState,
   case ButtonState::MedRelease:
     Presets.next();
     DC.setKHz(Presets.getKHz());
+    DC.setPeriod(Presets.getPeriod());
     break;
   case ButtonState::LongPress:
     LongPress();
@@ -81,12 +83,19 @@ void TwoButtonLogic::manual(ButtonState LBtnState, ButtonState RBtnState) {
   }
 }
 
-void TwoButtonLogic::configPWM(ButtonState LBtnState, ButtonState RBtnState) {
+void TwoButtonLogic::uart(ButtonState LBtnState, ButtonState RBtnState) {
+  if (LBtnState != ButtonState::None || RBtnState != ButtonState::None) {
+    setMode(Mode::Presets);
+    printTxtAndSleep(MsgPresets);
+  }
+}
+
+void TwoButtonLogic::configPeriod(ButtonState LBtnState, ButtonState RBtnState) {
   auto LongPress = [this]() {
     // Save
     tryWritePresetsToFlash();
     Disp.setFlash(false);
-    printTxtAndSleep(MsgEnd);
+    printTxtAndSleep(MsgConfirm);
     setMode(Mode::Presets);
   };
 
@@ -100,9 +109,9 @@ void TwoButtonLogic::configPWM(ButtonState LBtnState, ButtonState RBtnState) {
   switch (LBtnState) {
   case ButtonState::Release:
   case ButtonState::MedRelease:
-    Presets.decrPWM();
-    DC.setPeriod(Presets.getPWM());
-    DBG_PRINT(std::cout << "PWM=" << Presets.getPWM() << "\n";)
+    Presets.decrPeriod();
+    DC.setPeriod(Presets.getPeriod());
+    DBG_PRINT(std::cout << "Period=" << Presets.getPeriod() << "\n";)
     return;
   case ButtonState::LongPress:
     LongPress();
@@ -112,9 +121,9 @@ void TwoButtonLogic::configPWM(ButtonState LBtnState, ButtonState RBtnState) {
   switch (RBtnState) {
   case ButtonState::Release:
   case ButtonState::MedRelease:
-    Presets.incrPWM();
-    DC.setPeriod(Presets.getPWM());
-    DBG_PRINT(std::cout << "PWM=" << Presets.getPWM() << "\n";)
+    Presets.incrPeriod();
+    DC.setPeriod(Presets.getPeriod());
+    DBG_PRINT(std::cout << "Period=" << Presets.getPeriod() << "\n";)
     return;
   case ButtonState::LongPress:
     LongPress();
@@ -144,7 +153,7 @@ void TwoButtonLogic::configResetToDefaults(ButtonState LBtnState,
   if (bothLongPress(LBtnState, RBtnState)) {
     Presets.resetToDefaults(Flash);
     Disp.setFlash(false);
-    printTxtAndSleep(MsgEnd);
+    printTxtAndSleep(MsgConfirm);
     setMode(Mode::Presets);
     return;
   }
@@ -156,7 +165,7 @@ void TwoButtonLogic::configMaxMHz(ButtonState LBtnState, ButtonState RBtnState) 
     tryWritePresetsToFlash();
     setMode(Mode::Presets);
     Disp.setFlash(false);
-    printTxtAndSleep(MsgEnd);
+    printTxtAndSleep(MsgConfirm);
   };
   if (bothRelease(LBtnState, RBtnState)) {
     // Cancel
@@ -192,11 +201,11 @@ void TwoButtonLogic::configMaxMHz(ButtonState LBtnState, ButtonState RBtnState) 
 
 void TwoButtonLogic::configMHz(ButtonState LBtnState, ButtonState RBtnState) {
   auto LongPress = [this] () {
-    // Proceed to PWM mode
+    // Proceed to Period mode
     Disp.setFlash(false);
-    printTxtAndSleep(MsgPWM);
+    printTxtAndSleep(MsgPeriod);
     Disp.setFlash(true);
-    setMode(Mode::ConfigPWM);
+    setMode(Mode::ConfigPeriod);
   };
 
   if (bothRelease(LBtnState, RBtnState)) {
@@ -246,14 +255,17 @@ void TwoButtonLogic::tick() {
   case Mode::ConfigMHz:
     configMHz(LBtnState, RBtnState);
     break;
-  case Mode::ConfigPWM:
-    configPWM(LBtnState, RBtnState);
+  case Mode::ConfigPeriod:
+    configPeriod(LBtnState, RBtnState);
     break;
   case Mode::ConfigMaxMHz:
     configMaxMHz(LBtnState, RBtnState);
     break;
   case Mode::ResetToDefaults:
     configResetToDefaults(LBtnState, RBtnState);
+    break;
+  case Mode::Uart:
+    uart(LBtnState, RBtnState);
     break;
   }
   LastMode = getMode();

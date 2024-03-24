@@ -2,6 +2,17 @@
 #include "Debug.h"
 #include "config.h"
 
+void PotentiometerLogic::uart(int PotVal, ButtonState BtnState) {
+ if (EnablePot && movedPotComparedToSaved(PotVal)) {
+    setMode(Mode::Manual);
+    return;
+ }
+ if (BtnState != ButtonState::None) {
+   setMode(Mode::Presets);
+   printTxtAndSleep(MsgPresets);
+ }
+}
+
 void PotentiometerLogic::manual(int PotVal, ButtonState BtnState) {
   switch (BtnState) {
   case ButtonState::Release:
@@ -34,10 +45,12 @@ void PotentiometerLogic::cyclePresets(int PotVal, ButtonState BtnState) {
   case ButtonState::Release:
     Presets.cyclePrev();
     DC.setKHz(Presets.getKHz());
+    DC.setPeriod(Presets.getPeriod());
     break;
   case ButtonState::MedRelease:
     Presets.cycleMax();
     DC.setKHz(Presets.getKHz());
+    DC.setPeriod(Presets.getPeriod());
     break;
   case ButtonState::LongPress:
     if (Presets.atMaxKHz()) {
@@ -53,22 +66,22 @@ void PotentiometerLogic::cyclePresets(int PotVal, ButtonState BtnState) {
   }
 }
 
-void PotentiometerLogic::configPWM(int PotVal, ButtonState BtnState) {
+void PotentiometerLogic::configPeriod(int PotVal, ButtonState BtnState) {
   switch (BtnState) {
   case ButtonState::Release:
-    Presets.incrPWM();
-    DC.setPeriod(Presets.getPWM());
-    DBG_PRINT(std::cout << "PWM=" << Presets.getPWM() << "\n";)
+    Presets.incrPeriod();
+    DC.setPeriod(Presets.getPeriod());
+    DBG_PRINT(std::cout << "Period=" << Presets.getPeriod() << "\n";)
     return;
   case ButtonState::MedRelease:
-    Presets.decrPWM();
-    DC.setPeriod(Presets.getPWM());
-    DBG_PRINT(std::cout << "PWM=" << Presets.getPWM() << "\n";)
+    Presets.decrPeriod();
+    DC.setPeriod(Presets.getPeriod());
+    DBG_PRINT(std::cout << "Period=" << Presets.getPeriod() << "\n";)
     return;
   case ButtonState::LongPress:
     tryWritePresetsToFlash();
     Disp.setFlash(false);
-    printTxtAndSleep(MsgEnd);
+    printTxtAndSleep(MsgConfirm);
     savePotVal(PotVal);
     setMode(Mode::Presets);
     return;
@@ -78,12 +91,12 @@ void PotentiometerLogic::configPWM(int PotVal, ButtonState BtnState) {
   if (EnablePot && movedPotComparedToSaved(PotVal)) {
     switch (getPotDir(PotVal)) {
     case PotDir::Right:
-      Presets.incrPWM();
-      DC.setPeriod(Presets.getPWM());
+      Presets.incrPeriod();
+      DC.setPeriod(Presets.getPeriod());
       break;
     case PotDir::Left:
-      Presets.decrPWM();
-      DC.setPeriod(Presets.getPWM());
+      Presets.decrPeriod();
+      DC.setPeriod(Presets.getPeriod());
       break;
     }
   }
@@ -107,7 +120,7 @@ void PotentiometerLogic::configResetToDefaults(int PotVal,
   case ButtonState::LongPress:
     Presets.resetToDefaults(Flash);
     Disp.setFlash(false);
-    printTxtAndSleep(MsgEnd);
+    printTxtAndSleep(MsgConfirm);
     savePotVal(PotVal);
     setMode(Mode::Presets);
     break;
@@ -158,9 +171,9 @@ void PotentiometerLogic::configMHz(int PotVal, ButtonState BtnState) {
     return;
   case ButtonState::LongPress:
     Disp.setFlash(false);
-    printTxtAndSleep(MsgPWM);
+    printTxtAndSleep(MsgPeriod);
     Disp.setFlash(true);
-    setMode(Mode::ConfigPWM);
+    setMode(Mode::ConfigPeriod);
     return;
   }
   // If we moved the potentiometer enough, use it to control the value.
@@ -206,14 +219,17 @@ void PotentiometerLogic::tick() {
   case Mode::ConfigMHz:
     configMHz(PotVal, BtnState);
     break;
-  case Mode::ConfigPWM:
-    configPWM(PotVal, BtnState);
+  case Mode::ConfigPeriod:
+    configPeriod(PotVal, BtnState);
     break;
   case Mode::ConfigMaxMHz:
     configMaxMHz(PotVal, BtnState);
     break;
   case Mode::ResetToDefaults:
     configResetToDefaults(PotVal, BtnState);
+    break;
+  case Mode::Uart:
+    uart(PotVal, BtnState);
     break;
   }
   LastMode = getMode();

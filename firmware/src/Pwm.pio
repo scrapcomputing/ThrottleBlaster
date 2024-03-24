@@ -1,23 +1,37 @@
-;; Note: This file is copied verbatim from the Pi Pico SDK examples.
 ;;
 ;;  Copyright (c) 2020 Raspberry Pi (Trading) Ltd.
 ;;
 ;;  SPDX-License-Identifier: BSD-3-Clause
 ;;
+;; Note: This code is based on the Pi Pico SDK pwmn.pio example.
+;; Modified by Scrap Computing.
 
 .program pwm
 .side_set 1 opt
 
-    pull noblock    side 0 ; Pull from FIFO to OSR if available, else copy X to OSR.
-    mov x, osr             ; Copy most-recently-pulled value back to scratch X
-    mov y, isr             ; ISR contains PWM period. Y used as counter.
-countloop:
-    jmp x!=y noset         ; Set pin high if X == Y, keep the two paths length matched
-    jmp skip        side 1
+entry:
+    pull noblock          ; Pull from FIFO to OSR if available, else copy X to OSR.
+    mov x, osr            ; X is the PWM level
+    mov y, isr            ; ISR contains PWM period. Y is the PWM period counter
+    jmp !x levelZero      ; level==0 needs special treatment
+    jmp x!=y startPWM     ; level==max needs special treatment
+    jmp levelMax
+
+levelZero:                ; level==0 is a special case: Out pin should be 0.
+    jmp entry side 0
+
+levelMax:                 ; level==Max is a special case. Out pin should be 1.
+    jmp entry side 1      ; Set to 1 and try to pull new values from the queue
+
+startPWM:
+    jmp pwmLoop    side 0 ; Start by setting the output to 0
+pwmLoop:
+    jmp x!=y noset        ; If y < x the pin should remain 0.
+    jmp skip       side 1 ; Set to 1 if x == y
 noset:
-    nop                    ; Single dummy cycle to keep the two paths the same length
+    nop                   ; Single dummy cycle to keep the two paths the same length
 skip:
-    jmp y-- countloop      ; Loop until Y hits 0, then pull a fresh PWM value from FIFO
+    jmp y-- pwmLoop       ; Loop until Y hits 0, then pull a fresh PWM value from FIFO
 
 % c-sdk {
 static inline void pwm_program_init(PIO pio, uint sm, uint offset, uint GPIO) {

@@ -37,9 +37,11 @@ class PotentiometerLogic : public CommonLogic {
 
   void manual(int PotVal, ButtonState BtnState);
 
+  void uart(int PotVal, ButtonState BtnState);
+
   void cyclePresets(int PotVal, ButtonState BtnState);
 
-  void configPWM(int PotVal, ButtonState BtnState);
+  void configPeriod(int PotVal, ButtonState BtnState);
 
   void configResetToDefaults(int PotVal, ButtonState BtnState);
 
