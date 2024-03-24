@@ -5,6 +5,8 @@
 #ifndef __CONFIGOPTS_H__
 #define __CONFIGOPTS_H__
 
+#include <hardware/uart.h>
+
 // GPIOs
 // Display
 static constexpr const int DisplayClkGPIO = 0;
@@ -23,7 +25,17 @@ static constexpr const int ModeJP1GPIO = 5;
 static constexpr const int ModeJP2GPIO = 6;
 // Potentiometer
 static constexpr const int PotentiometerGPIO = 28;
+// UART
+static constexpr const int UartGPIO = 8; // (also UartGPIO+1)
 
+// Uart configuration 9600 8N1
+static constexpr const uint32_t UartRequestedBaud = 9600;
+static constexpr const uint32_t UartDataBits = 8;
+static constexpr const uart_parity_t UartParity = UART_PARITY_NONE;
+static constexpr const uint32_t UartStopBits = 1;
+static constexpr const uint32_t UartFlowControl = false;
+
+static constexpr const char UartEOM = '\r';
 
 // MHz Settings
 static constexpr const int DefaultMaxMHz = 200;
@@ -32,8 +44,8 @@ static constexpr const int MHzLimitHi = 5000;
 // The minimum MHz we allow.
 static constexpr const int MHzLimitLo = 1;
 // This controls the PWM period, the higher the value the larger the period.
-static constexpr const int PWMLimitHi = 256;
-static constexpr const int PWMLimitLo = 1;
+static constexpr const int PeriodLimitHi = 256;
+static constexpr const int PeriodLimitLo = 1;
 
 static constexpr const int TwoBtnMaxMHzStep = 50;
 
@@ -70,10 +82,11 @@ static constexpr const int RotaryLongPressCnt = 200;
 // Flashing
 static constexpr const int DisplayFlashOnPeriod = 100;
 static constexpr const int DisplayFlashOffPeriod = 30;
+// The delay after printing a message.
+static constexpr const int PrintSleep = 1000;
 
 // Other
 // No need to update the PWM period on every UI tick. Skip this many.
 static constexpr const int UpdatePWMSamplePeriod = 8;
-static constexpr const int MainLEDToggleCnt = 0xfff;
 
 #endif // __CONFIGOPTS_H__

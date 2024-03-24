@@ -1,10 +1,11 @@
 #include "CommonLogic.h"
 #include "Debug.h"
 #include "pico/time.h"
+#include <string>
 
 void CommonLogic::setMode(Mode NewMode) {
   BeforeMaxMHz = Presets.getMaxMHz();
-  BeforePWM = Presets.getPWM();
+  BeforePeriod = Presets.getPeriod();
   BeforeActualKHz = Presets.getActualKHz();
 
   CurrMode = NewMode;
@@ -13,13 +14,14 @@ void CommonLogic::setMode(Mode NewMode) {
 
 void CommonLogic::tryWritePresetsToFlash() {
   if (Presets.getActualKHz() != BeforeActualKHz ||
-      Presets.getPWM() != BeforePWM || Presets.getMaxMHz() != BeforeMaxMHz) {
+      Presets.getPeriod() != BeforePeriod ||
+      Presets.getMaxMHz() != BeforeMaxMHz) {
     DBG_PRINT(std::cout << "WriteToFlash:\n";)
     DBG_PRINT(std::cout << "           Before After\n";)
     DBG_PRINT(std::cout << "ActualKHz: " << BeforeActualKHz << " "
                         << Presets.getActualKHz() << "\n";)
-    DBG_PRINT(std::cout << "PWM:       " << BeforePWM << " " << Presets.getPWM()
-                        << "\n";)
+    DBG_PRINT(std::cout << "Period:       " << BeforePeriod << " "
+                        << Presets.getPeriod() << "\n";)
     DBG_PRINT(std::cout << "MaxMHz:    " << BeforeMaxMHz << " "
                         << Presets.getMaxMHz() << "\n";)
     Presets.writeToFlash(Flash);
@@ -40,10 +42,11 @@ void CommonLogic::updateDisplay() {
   case Mode::ConfigMHz:
     Disp.printKHz(Presets.getActualKHz());
     break;
-  case Mode::ConfigPWM:
-    Disp.printRaw(Presets.getPWM());
+  case Mode::ConfigPeriod:
+    Disp.printRaw(Presets.getPeriod());
     break;
   case Mode::Manual:
+  case Mode::Uart:
     Disp.printKHz(DC.getKHz());
     break;
   case Mode::ConfigMaxMHz:
@@ -54,4 +57,52 @@ void CommonLogic::updateDisplay() {
     break;
   }
 #endif
+}
+
+void CommonLogic::uartTick(Uart &Uart) {
+  auto Bytes = Uart.readNonBlocking();
+  auto NumBytes = Bytes.size();
+  if (NumBytes == 0)
+    return;
+  if (NumBytes >= 1) {
+    for (char Byte : Bytes) {
+      // Skip some illegal chars.
+      if (Byte == '\n')
+        continue;
+      UartStr += Byte;
+    }
+  }
+  DBG_PRINT(std::cout << "UartStr: " << UartStr << "\n";)
+  // Reject messages that are too long!
+  if (UartStr.size() > MaxUartStrSz) {
+    DBG_PRINT(std::cout << "Uart: Too many chars:'" << UartStr << "'\n";)
+    printTxtAndSleep(MsgUartErr);
+    UartStr.clear();
+    return;
+  }
+  // Look for the EOM character.
+  if (UartStr.back() != UartEOM)
+    return;
+  float MHz = 0;
+  int Period = 0;
+  sscanf(UartStr.c_str(), "F%fP%d\r", &MHz, &Period);
+  int KHz = MHz * 1000;
+  DBG_PRINT(std::cout << "UART: "
+                      << "MHz=" << MHz << " KHz=" << KHz << " Period=" << Period
+                      << "\n";)
+  if (KHz == 0) {
+    setMode(Mode::Uart);
+    printTxtAndSleep(MsgUartMode);
+    DC.setMHzToMax();
+  } else if ((MHz >= MHzLimitLo && MHz <= MHzLimitHi) &&
+             (Period >= PeriodLimitLo && Period <= PeriodLimitHi)) {
+    setMode(Mode::Uart);
+    DC.setKHz(KHz);
+    DC.setPeriod(Period);
+    printTxtAndSleep(MsgUartMode);
+    // Uart.writeBlockingStr("OK\r\n");
+  } else {
+    printTxtAndSleep(MsgUartErr);
+  }
+  UartStr.clear();
 }

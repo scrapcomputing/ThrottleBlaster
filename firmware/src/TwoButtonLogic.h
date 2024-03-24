@@ -31,7 +31,9 @@ class TwoButtonLogic : public CommonLogic {
 
   void manual(ButtonState LBtnState, ButtonState RBtnState);
 
-  void configPWM(ButtonState LBtnState, ButtonState RBtnState);
+  void uart(ButtonState LBtnState, ButtonState RBtnState);
+
+  void configPeriod(ButtonState LBtnState, ButtonState RBtnState);
 
   void configResetToDefaults(ButtonState LBtnState, ButtonState RBtnState);
 

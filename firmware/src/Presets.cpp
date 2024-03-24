@@ -22,14 +22,14 @@ void PresetsTable::decrActualKHz() {
   Val = std::max(1000, Val - 1000);
 }
 
-void PresetsTable::incrPWM() {
-  int &Val = Table[Idx].PWM;
-  Val = std::min(PWMLimitHi, Val + 1);
+void PresetsTable::incrPeriod() {
+  int &Val = Table[Idx].Period;
+  Val = std::min(PeriodLimitHi, Val + 1);
 }
 
-void PresetsTable::decrPWM() {
-  int &Val = Table[Idx].PWM;
-  Val = std::max(PWMLimitLo, Val - 1);
+void PresetsTable::decrPeriod() {
+  int &Val = Table[Idx].Period;
+  Val = std::max(PeriodLimitLo, Val - 1);
 }
 
 void PresetsTable::cyclePrev() {

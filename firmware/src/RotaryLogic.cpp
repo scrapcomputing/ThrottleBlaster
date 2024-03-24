@@ -24,25 +24,29 @@ void RotaryLogic::onSwRelease() {
     printTxtAndSleep(MsgPresets);
     break;
   case Mode::ConfigMHz:
-    setMode(Mode::ConfigPWM);
+    setMode(Mode::ConfigPeriod);
     Disp.setFlash(false);
-    printTxtAndSleep(MsgPWM);
+    printTxtAndSleep(MsgPeriod);
     Disp.setFlash(true);
     break;
-  case Mode::ConfigPWM:
+  case Mode::ConfigPeriod:
     setMode(Mode::Presets);
     tryWritePresetsToFlash();
     Disp.setFlash(false);
-    printTxtAndSleep(MsgEnd);
+    printTxtAndSleep(MsgConfirm);
     break;
   case Mode::ConfigMaxMHz:
     tryWritePresetsToFlash();
     setMode(Mode::Presets);
     Disp.setFlash(false);
-    printTxtAndSleep(MsgEnd);
+    printTxtAndSleep(MsgConfirm);
     break;
   case Mode::ResetToDefaults:
     escapeReset();
+    break;
+  case Mode::Uart:
+    setMode(Mode::Presets);
+    printTxtAndSleep(MsgPresets);
     break;
   }
 }
@@ -66,7 +70,7 @@ void RotaryLogic::onSwLongPress() {
     Disp.setFlash(true);
     break;
   case Mode::ConfigMHz:
-  case Mode::ConfigPWM:
+  case Mode::ConfigPeriod:
     setMode(Mode::Presets);
     printTxtAndSleep(MsgEscape);
     Disp.setFlash(false);
@@ -79,8 +83,12 @@ void RotaryLogic::onSwLongPress() {
   case Mode::ResetToDefaults:
     setMode(Mode::Presets);
     Presets.resetToDefaults(Flash);
-    printTxtAndSleep(MsgEnd);
+    printTxtAndSleep(MsgConfirm);
     Disp.setFlash(false);
+    break;
+  case Mode::Uart:
+    setMode(Mode::Presets);
+    printTxtAndSleep(MsgPresets);
     break;
   }
 }
@@ -90,17 +98,19 @@ void RotaryLogic::onLeft() {
   case Mode::Presets:
     Presets.prev();
     DC.setKHz(Presets.getActualKHz());
+    DC.setPeriod(Presets.getPeriod());
     DBG_PRINT(std::cout << "Presets=" << Presets.getKHz() << "\n";)
     break;
   case Mode::ConfigMHz:
     Presets.decrActualKHz();
     DC.setKHz(Presets.getActualKHz());
+    DC.setPeriod(Presets.getPeriod());
     DBG_PRINT(std::cout << "ActualKHz=" << Presets.getActualKHz() << "\n";)
     break;
-  case Mode::ConfigPWM:
-    Presets.decrPWM();
-    DC.setPeriod(Presets.getPWM());
-    DBG_PRINT(std::cout << "PWM=" << Presets.getPWM() << "\n";)
+  case Mode::ConfigPeriod:
+    Presets.decrPeriod();
+    DC.setPeriod(Presets.getPeriod());
+    DBG_PRINT(std::cout << "Period=" << Presets.getPeriod() << "\n";)
     break;
   case Mode::Manual:
     DC.decrMHz();
@@ -118,6 +128,10 @@ void RotaryLogic::onLeft() {
   case Mode::ResetToDefaults:
     escapeReset();
     break;
+  case Mode::Uart:
+    setMode(Mode::Presets);
+    printTxtAndSleep(MsgPresets);
+    break;
   }
 }
 
@@ -126,17 +140,19 @@ void RotaryLogic::onRight() {
   case Mode::Presets:
     Presets.next();
     DC.setKHz(Presets.getActualKHz());
+    DC.setPeriod(Presets.getPeriod());
     DBG_PRINT(std::cout << "Presets=" << Presets.getKHz() << "\n";)
     break;
   case Mode::ConfigMHz:
     Presets.incrActualKHz();
     DC.setKHz(Presets.getActualKHz());
+    DC.setPeriod(Presets.getPeriod());
     DBG_PRINT(std::cout << "ActualKHz=" << Presets.getActualKHz() << "\n";)
     break;
-  case Mode::ConfigPWM: {
-    Presets.incrPWM();
-    DC.setPeriod(Presets.getPWM());
-    DBG_PRINT(std::cout << "PWM=" << Presets.getPWM() << "\n";)
+  case Mode::ConfigPeriod: {
+    Presets.incrPeriod();
+    DC.setPeriod(Presets.getPeriod());
+    DBG_PRINT(std::cout << "Period=" << Presets.getPeriod() << "\n";)
     break;
   case Mode::Manual:
     DC.incrMHz();
@@ -155,6 +171,10 @@ void RotaryLogic::onRight() {
     setMode(Mode::Presets);
     Disp.setFlash(false);
     printTxtAndSleep(MsgEscape);
+    break;
+  case Mode::Uart:
+    setMode(Mode::Presets);
+    printTxtAndSleep(MsgPresets);
     break;
   }
   }

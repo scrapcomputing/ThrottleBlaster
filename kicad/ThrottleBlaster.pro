@@ -1,4 +1,4 @@
-update=Sat 16 Mar 2024 11:24:14 AM PDT
+update=Sun 24 Mar 2024 12:33:23 PM PDT
 version=1
 last_client=kicad
 [general]
@@ -34,7 +34,7 @@ LibDir=
 [schematic_editor]
 version=1
 PageLayoutDescrFile=
-PlotDirectoryName=
+PlotDirectoryName=/home/cowbob/kafroworks/ThrottleBlaster/img/
 SubpartIdSeparator=0
 SubpartFirstId=65
 NetFmtName=

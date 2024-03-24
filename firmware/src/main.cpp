@@ -13,6 +13,7 @@
 #include "RotaryEncoder.h"
 #include "RotaryLogic.h"
 #include "TwoButtonLogic.h"
+#include "Uart.h"
 #include "hardware/pio.h"
 #include <bsp/board.h>
 #include <chrono>
@@ -21,24 +22,10 @@
 #include <memory>
 #include <pico/multicore.h>
 
-static void toggleLed(Pico &Pico) {
-  static bool ON;
-  static volatile unsigned Cnt;
-  ++Cnt;
-  if (Cnt != MainLEDToggleCnt)
-    return;
-  if (ON)
-    Pico.ledOFF();
-  else
-    Pico.ledON();
-  ON = !ON;
-  Cnt = 0;
-}
-
 PresetsTable Presets;
 
 
-static void pio_pwm_set_period(PIO Pio, uint SM, uint32_t Period) {
+static void PioPWMSetPeriod(PIO Pio, uint SM, uint32_t Period) {
   pio_sm_set_enabled(Pio, SM, false);
   pio_sm_put_blocking(Pio, SM, Period);
   pio_sm_exec(Pio, SM, pio_encode_pull(false, false));
@@ -46,14 +33,8 @@ static void pio_pwm_set_period(PIO Pio, uint SM, uint32_t Period) {
   pio_sm_set_enabled(Pio, SM, true);
 }
 
-static void pio_pwm_set_level(PIO Pio, uint SM, uint32_t Level) {
+static void PioPWMSetLevel(PIO Pio, uint SM, uint32_t Level) {
   pio_sm_put_blocking(Pio, SM, Level);
-}
-
-// Core 1 is focused on toggling the throttle pin.
-static void _main_loop() {
-  DBG_PRINT(std::cout << "Core1 starting...\n";)
-
 }
 
 enum class UIMode {
@@ -98,7 +79,7 @@ class ThrottlePin {
   DutyCycle &DC;
   PIO Pio;
   int SM;
-  int LastLevel = 0;
+  int LastKHz = 0;
   int LastPeriod = 0;
   int CntTicks = 0;
 
@@ -117,32 +98,22 @@ public:
       return;
     CntTicks = 0;
 
-    int Level = DC.getLevel();
+    int KHz = DC.getKHz();
     int Period = DC.getPeriod();
-    if (Level != LastLevel || Period != LastPeriod) {
+    if (KHz != LastKHz || Period != LastPeriod) {
       DBG_PRINT(DC.dump();)
-      if (Level == 0) {
-        pio_sm_set_enabled(Pio, SM, false);
-        Pi.setGPIO(ThrottleGPIO, false);
-      } else if (Level == Period) {
-        pio_sm_set_enabled(Pio, SM, false);
-        Pi.setGPIO(ThrottleGPIO, true);
-      } else {
-        if (LastLevel == 0 || LastLevel == Period)
-          pio_sm_set_enabled(Pio, SM, true);
-
-        pio_pwm_set_period(Pio, SM, Period);
-        pio_pwm_set_level(Pio, SM, Level);
-      }
+      int Level = DC.getLevel();
+      PioPWMSetPeriod(Pio, SM, Period);
+      PioPWMSetLevel(Pio, SM, Level);
     }
-    LastLevel = Level;
+    LastKHz = KHz;
     LastPeriod = Period;
   }
 };
 
 // Core 0 is handling the UI.
 static void core0_main_loop(Pico &Pico, Display &Disp, FlashStorage &Flash,
-                            DutyCycle &DC) {
+                            DutyCycle &DC, Uart &Uart) {
   int LoopCntSinceRotary = 0;
 
   std::unique_ptr<CommonLogic> UI;
@@ -169,14 +140,14 @@ static void core0_main_loop(Pico &Pico, Display &Disp, FlashStorage &Flash,
 
   ThrottlePin TPin(Pico, DC);
 
+#ifndef DISALBE_PICO_LED
+  Pico.ledON();
+#endif
   while (true) {
     // The main entry point for the UI.
-    UI->tick();
+    UI->tickAll(Uart);
     // Update the Throttle pin PWM if needed.
     TPin.updatePWM();
-#ifndef DISALBE_PICO_LED
-    toggleLed(Pico);
-#endif
   }
 }
 
@@ -207,6 +178,9 @@ int main() {
   // DutyCycle needs an updated Presets.
   DutyCycle DC(Presets);
 
-  core0_main_loop(Pico, Disp, Flash, DC);
+  Uart Uart(UartGPIO, UartRequestedBaud, UartDataBits, UartStopBits, UartParity,
+            UartFlowControl);
+
+  core0_main_loop(Pico, Disp, Flash, DC, Uart);
   return 0;
 }

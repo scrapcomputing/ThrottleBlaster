@@ -4,6 +4,8 @@ A Pi Pico-based solution that reduces the effective frequency of fast CPUs by pu
 
 This allows you to play speed-sensitive games, like Digger on a 1200MHz Athlon!
 
+<img src='img/ThrottleBlaster_pcb.jpg' height=200 width=auto>
+
 <img src='img/ThrottleBlaster_breadboard.jpg' height=200 width=auto>
 
 Videos:
@@ -11,6 +13,8 @@ Videos:
 - https://www.youtube.com/watch?v=9uNml2j6sy0
 
 Download firmware (ThrottleBlaster.uf2): https://github.com/scrapcomputing/ThrottleBlaster/releases
+
+Download gerbers (ThrottleBlaster_gerbers_rev.X.X.zip): https://github.com/scrapcomputing/ThrottleBlaster/releases
 
 # How it works
 The Throttle Blaster is a fancy PWM controller that pulls the CPU's STPCLK# to ground.
@@ -75,6 +79,31 @@ It is tailored to the needs of vintage PC enthusiasts, so it drives a 4-digit 7-
 
 - Can be used in conjunction with the single-button operation. Turning the potentiometer overrides the preset selected by the button.
 
+# Serial Mode (UART): Control by the serial port, works in conjunction with all other modes.
+
+You can connect to the Throttle Blaster via the serial port and set the Frequency and PWM Period.
+This is convenient for launching a game with a `.bat` file that first configures the Throttle Blaster and then launches the game.
+
+## Circuit
+- Connect the Throttle Blaster's Tx pin to the PC's serial port Rx pin (that is pin 2 of the serial connector), the Throttle Blaster's Rx pin to serial Tx (pin 3) and ground to ground (pin 5)
+
+
+## Software
+- Serial port settings: 9600 8N1, no flow control
+- The string to send is in the form `F<MHz>P<Period>\r`, where:
+  - `<MHz>` is the desired effective frequency in MHz (float),
+  - `<Period>` is the PWM Period level (1-256),
+  - `\r` (also seen as `^M`) is the Carriage-Return character (ASCII 13 0x0d).
+  - For example `F4.77P8` sets the frequency to `4.77MHz` and the PWM period to `8` which is a around 50us.
+- In DOS you can use a terminal emulator, like [Kermit](http://www.columbia.edu/kermit/ftp/archives/msk314.zip), to connect and send the command.
+  - You could use this one-liner in a batch file: `kermit set port COM1, set speed 9600, output F4.77P8\13`. This will set the frequency to 4.77 MHz, the period to 8 and will send a Carriage-Return character (`\13`).
+
+> **Note**
+> Changing the frequency is not instantaneous. So if you are setting the frequency in a batch file, please consider adding a delay before launching the game.
+
+> **Note**
+> Please note that the serial-port functionality is totally optional. You don't need to populate the MAX3232 IC and its capacitors if you are not planning to use it.
+
 # Presets
 
  Display | Performance equivalence
@@ -109,19 +138,20 @@ It is tailored to the needs of vintage PC enthusiasts, so it drives a 4-digit 7-
 - Copy the `ThrottleBlaster.uf2` firmware to the drive associated with the Pico
 - Safely eject the mass-storage device
 
-The Pico should boot and you should see the Pico's LED blinking.
+The Pico should boot and you should see the Pico's LED light up.
 
 # Circuit
 
 ## Schematic
 
-<img src='img/schematic.png' alt="Throttle Blaster Schematic" height=240 width=auto>
+<img src='img/ThrottleBlaster.svg' alt="Throttle Blaster Schematic" height=300 width=auto>
 
 The Throttle Blaster circuit is fairly simple:
 - The Rotary Encoder, the Push Button and the Potentiometer are connected to the Pico's GPIOs.
 - The Display is also connected directly to GPIOs
-- The STPCLK# pin is driven by a N-channel MOSFET, a 2N7000, and its gate pin connects to the Pico's GPIO via a 1K resistor.
+- The STPCLK# pin is driven by a N-channel MOSFET, a 2N7000, and its gate pin connects to the Pico's GPIO via a 1K resistor and the transistor's drain connects to STPCLK# via a 100 Ohm resistor.
 - The circuit is powered directly from the PSU's 5V power supply via diode (preferrably a Schottky).
+- The serial port circuit relies on a MAX3232 for converting the RS232 levels to Pi-Pico levels.
 
 ## PCB
 
@@ -129,22 +159,33 @@ The Throttle Blaster circuit is fairly simple:
 <img src='img/ThrottleBlaster_PCB_back.jpg' alt="Throttle Blaster PCB Back" height=240 width=auto>
 
 ## Bill Of Materials
-Reference | Quantity     | Value                                            | Description
-----------|--------------|--------------------------------------------------|------------
-N/A       | 1 (recommended) | TM1637 based 4-digit 7-segment display        | The display of the Throttle Blaster
-D1        | 1            | Through-hole diode (preferrably Schottky 1N5817) | Reverse polarity protection
-J1        | 1 (optional) | 1x01 pin-header 2.54mm pitch                     | For the STPCLK# cable
-JP1/JP2   | 1            | 2x02 pin-header 2.54mm pitch                     | Selects mode of operation
-Jumpers   | 2            | 2.54mm pitch Jumpers                             | For JP1/JP2
-Q1        | 1            | 2N7000 N-channel MOSFET                          | Pulls down the CPU's STPCLK# pin
-R1        | 1            | 1K Resistor 1/8W                                 | Drives the transistor's gate
-RV1       | 1 (mode)     | 10K linear potentiometer                         | Selects Frequency in Potentiometer mode.
-SW1       | 1 (mode)     | Push button                                      | Selects Frequency in Button mode.
-SW2       | 1 (mode)     | Rotary Encoder with push-button, ALPS EC11E-Switch Vertical | Selects Frequency in Rotary mode.
-U1        | 1 (optional) | 1x04 pin-header 2.54mm pitch                     | Connects to the TM1637 display
-U2        | 1            | Raspberry Pi Pico                                |
-U3        | 1            | 1x04 horizontal pin header 2.54mm pitch          | For connecting to the floppy power connector, for powering the unit.
-C1        | 1 (mode)     | 100pF Disc Ceramic capacitor                     | Used to reduce Potentiometer noise.
+
+Download gerbers: https://github.com/scrapcomputing/ThrottleBlaster/releases
+
+Reference      | Quantity          | Value                                            | Description
+---------------|-------------------|--------------------------------------------------|------------
+N/A            | 1 (recommended)   | TM1637 based 4-digit 7-segment display           | The display of the Throttle Blaster
+D1             | 1                 | Through-hole diode (preferrably Schottky 1N5817) | Reverse polarity protection
+J1             | 1 (optional)      | 1x01 angled pin-header 2.54mm pitch              | For the STPCLK# cable
+J2             | 1 (optional UART) | 1x03 pin-header 2.54mm pitch                     | For controlling the Throttle Blaster via serial. (Requires MAX3232)
+JP1/JP2        | 1                 | 2x02 (or 2x 1x02) pin-header 2.54mm pitch        | Selects mode of operation.
+SW1/SW2        | 2 (optional)      | 1x02 pin-header 2.54mm pitch                     | For the SW1 and SW2 switches
+U1             | 1 (optional)      | 1x04 angled pin-header 2.54mm pitch              | For connecting the TM1637 7-segment display.
+Jumpers        | 2                 | 2.54mm pitch Jumpers                             | For JP1/JP2
+Q1             | 1                 | 2N7000 N-channel MOSFET                          | Pulls down the CPU's STPCLK# pin
+R1             | 1                 | 1K Resistor SMD 1206                             | For the throttle transistor gate.
+R2             | 1                 | 100 Ohm Resistor SMD 1206                        | Between the throttle pin and the throttling transistor.
+RV1            | 1 (mode POT)      | 10K linear potentiometer                         | Selects Frequency in Potentiometer mode.
+SW1            | 1 (mode 1Btn)     | Push button                                      | Selects Frequency in 1Btn mode.
+SW3            | 1 (mode 2Btn)     | Push button                                      | The right button in 2Btn mode.
+SW2            | 1 (mode ROT)      | Rotary Encoder with push-button, (ALPS EC11E-Switch) Vertical | Selects Frequency in Rotary mode.
+U2             | 1                 | Raspberry Pi Pico                                |
+U3             | 1                 | 1x04 horizontal pin header 2.54mm pitch          | For connecting to the floppy power connector, for powering the unit.
+C1             | 1 (mode POT)      | 100pF Disc Ceramic capacitor                     | Used to reduce Potentiometer noise.
+C2,C3,C4,C5,C6 | 5 (optional UART) | 1uF Ceramic Capacitor SMD 1206                   | For MAX3232 (serial port)
+U4             | 1 (optional UART) | MAX3232 SOIC-16 5.3x10.2mm                       | For controlling the Throttle Blaster via the serial port.
+
+
 
 ## Using the circuit for the first time
 - Select the operation mode using jumpers JP1/JP2.
@@ -162,6 +203,11 @@ This table lists the STPCLK# pin number for your reference:
  Pentium-iii socket   | AG35
  Pentium-iii slot1    | B6
  Athlon XP            | AC1
+
+# Change Log
+- Rev 0.3: Adds UART support in both firmware and PCB.
+- Rev 0.2: Adds two-button mode "2Btn".
+- Rev 0.1: Initial release.
 
 # License
 The project is GPLv2 except for `Pwm.pio` which comes from the Pi Pico SDK examples and is under `SPDX-License-Identifier: BSD-3-Clause`.

@@ -17,38 +17,38 @@ class PresetsTable {
   struct Entry {
     int PresetKHz;
     int ActualKHz;
-    int PWM;
-    Entry(int PresetKHz, int ActualKHz, int PWM)
-        : PresetKHz(PresetKHz), ActualKHz(ActualKHz), PWM(PWM) {}
+    int Period; ///> PWM Period
+    Entry(int PresetKHz, int ActualKHz, int Period)
+        : PresetKHz(PresetKHz), ActualKHz(ActualKHz), Period(Period) {}
     Entry(FlashStorage &Flash, int &Offset) {
       PresetKHz = Flash.read(Offset++);
       ActualKHz = Flash.read(Offset++);
-      PWM = Flash.read(Offset++);
+      Period = Flash.read(Offset++);
     }
     void dump() const {
-      std::cout << PresetKHz << ", " << ActualKHz << ", " << PWM << "\n";
+      std::cout << PresetKHz << ", " << ActualKHz << ", " << Period << "\n";
     }
     /// Helper for writing to Flash.
     void appendToVec(std::vector<int> &Vec) const {
       Vec.push_back(PresetKHz);
       Vec.push_back(ActualKHz);
-      Vec.push_back(PWM);
+      Vec.push_back(Period);
     }
     unsigned checksum() const {
-      return (unsigned)PresetKHz ^ (unsigned)ActualKHz ^ (unsigned)PWM;
+      return (unsigned)PresetKHz ^ (unsigned)ActualKHz ^ (unsigned)Period;
     }
   };
 
   static constexpr const int DefaultPeriod = 8; // ~50us
 
   // const std::vector<Entry> ImmutableTable = {
-  //     {4770, 4770, DefaultPWM},     {8000, 8000, DefaultPWM},
-  //     {10000, 10000, DefaultPWM},   {25000, 25000, DefaultPWM},
-  //     {33000, 33000, DefaultPWM},   {66000, 66000, DefaultPWM},
-  //     {100000, 100000, DefaultPWM}, {133000, 133000, DefaultPWM},
-  //     {266000, 266000, DefaultPWM}, {450000, 450000, DefaultPWM},
-  //     {733000, 733000, DefaultPWM}, {1000000, 1000000, DefaultPWM},
-  //     {1666000, 1666000, DefaultPWM}, {3200000, 3200000, DefaultPWM}};
+  //     {4770, 4770, DefaultPeriod},     {8000, 8000, DefaultPeriod},
+  //     {10000, 10000, DefaultPeriod},   {25000, 25000, DefaultPeriod},
+  //     {33000, 33000, DefaultPeriod},   {66000, 66000, DefaultPeriod},
+  //     {100000, 100000, DefaultPeriod}, {133000, 133000, DefaultPeriod},
+  //     {266000, 266000, DefaultPeriod}, {450000, 450000, DefaultPeriod},
+  //     {733000, 733000, DefaultPeriod}, {1000000, 1000000, DefaultPeriod},
+  //     {1666000, 1666000, DefaultPeriod}, {3200000, 3200000, DefaultPeriod}};
   const std::vector<Entry> ImmutableTable = {
       {4770, 4770, DefaultPeriod},     {8000, 8000, DefaultPeriod},
       {10000, 10000, DefaultPeriod},   {25000, 25000, DefaultPeriod},
@@ -75,9 +75,9 @@ public:
   int getActualKHz() const { return Table[Idx].ActualKHz; }
   void incrActualKHz();
   void decrActualKHz();
-  int getPWM() const { return Table[Idx].PWM; }
-  void incrPWM();
-  void decrPWM();
+  int getPeriod() const { return Table[Idx].Period; }
+  void incrPeriod();
+  void decrPeriod();
   void prev() { Idx = std::max(0, Idx - 1); }
   void next() { Idx = std::min(getMaxIdx(), Idx + 1); }
   void cyclePrev();

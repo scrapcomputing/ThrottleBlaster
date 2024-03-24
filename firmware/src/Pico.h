@@ -53,6 +53,9 @@ public:
   inline void setGPIODirectionIn(const PinRange &Pins) {
     gpio_set_dir_in_masked(Pins.getMask());
   }
+  inline void setGPIODir(int GPIO, bool Out) {
+    gpio_set_dir(GPIO, Out);
+  }
   /// Sets \p Pins to \p Value.
   inline void setGPIOBits(const PinRange &Pins, uint32_t Value) {
     gpio_put_masked(Pins.getMask(), Value << Pins.getFrom());
@@ -71,6 +74,7 @@ public:
   inline bool getGPIO(uint32_t GPIO) const { return (State >> GPIO) & 0x1; }
   /// Sets \p GPIO to \p Value.
   inline void setGPIO(uint32_t GPIO, bool Value) { gpio_put(GPIO, Value); }
+  inline bool getGPIO(uint32_t GPIO) { return gpio_get(GPIO); }
   /// Reads ADC at \p GPIO and returns the 12-bit value.
   /// Note: GPIO must be a valid ADC GPIO, i.e., 26-29.
   uint16_t readADC(uint32_t GPIO) const;
