@@ -9,8 +9,9 @@ This allows you to play speed-sensitive games, like Digger on a 1200MHz Athlon!
 <img src='img/ThrottleBlaster_breadboard.jpg' height=200 width=auto>
 
 Videos:
-- https://www.youtube.com/watch?v=nGy8OmOe_34
-- https://www.youtube.com/watch?v=9uNml2j6sy0
+- Part 3 (rev 0.3): https://www.youtube.com/watch?v=g4OluJwGDEQ
+- Part 2: https://www.youtube.com/watch?v=nGy8OmOe_34
+- Part 1: https://www.youtube.com/watch?v=9uNml2j6sy0
 
 Download firmware (ThrottleBlaster.uf2): https://github.com/scrapcomputing/ThrottleBlaster/releases
 
