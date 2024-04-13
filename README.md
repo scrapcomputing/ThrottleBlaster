@@ -26,10 +26,11 @@ It is tailored to the needs of vintage PC enthusiasts, so it drives a 4-digit 7-
 
 
 # Features
-- Three modes of operation to fit your needs, selected by jumpers:
+- Four modes of operation to fit your needs, selected by jumpers:
   1. single push-button control. This is great for re-purposing the Turbo button (NOTE: the on/off turbo switch would need to be replaced with a push-button).
-  2. rotary-encoder with a push-button. This is great for placing it on a drive bay panel.
-  3. analogue potentiometer with/without a push-button. This could be used for configurations without a display.
+  2. Two-button control (left/right).
+  3. rotary-encoder with a push-button. This is great for placing it on a drive bay panel.
+  4. analogue potentiometer with/without a push-button. This could be used for configurations without a display.
 - 7-segment TM1637-based display that shows the effective frequency. This can be considered optional, but is highly recommended.
 - Cycle through preset frequencies or select a frequency at a 1MHz granularity.
 - Each preset can be tuned/programmed both in terms of the PWM level but also the PWM frequency.
@@ -163,28 +164,29 @@ The Throttle Blaster circuit is fairly simple:
 
 Download gerbers: https://github.com/scrapcomputing/ThrottleBlaster/releases
 
-Reference      | Quantity          | Value                                            | Description
----------------|-------------------|--------------------------------------------------|------------
-N/A            | 1 (recommended)   | TM1637 based 4-digit 7-segment display           | The display of the Throttle Blaster
-D1             | 1                 | Through-hole diode (preferrably Schottky 1N5817) | Reverse polarity protection
-J1             | 1 (optional)      | 1x01 angled pin-header 2.54mm pitch              | For the STPCLK# cable
-J2             | 1 (optional UART) | 1x03 pin-header 2.54mm pitch                     | For controlling the Throttle Blaster via serial. (Requires MAX3232)
-JP1/JP2        | 1                 | 2x02 (or 2x 1x02) pin-header 2.54mm pitch        | Selects mode of operation.
-SW1/SW2        | 2 (optional)      | 1x02 pin-header 2.54mm pitch                     | For the SW1 and SW2 switches
-U1             | 1 (optional)      | 1x04 angled pin-header 2.54mm pitch              | For connecting the TM1637 7-segment display.
-Jumpers        | 2                 | 2.54mm pitch Jumpers                             | For JP1/JP2
-Q1             | 1                 | 2N7000 N-channel MOSFET                          | Pulls down the CPU's STPCLK# pin
-R1             | 1                 | 1K Resistor SMD 1206                             | For the throttle transistor gate.
-R2             | 1                 | 100 Ohm Resistor SMD 1206                        | Between the throttle pin and the throttling transistor.
-RV1            | 1 (mode POT)      | 10K linear potentiometer                         | Selects Frequency in Potentiometer mode.
-SW1            | 1 (mode 1Btn)     | Push button                                      | Selects Frequency in 1Btn mode.
-SW3            | 1 (mode 2Btn)     | Push button                                      | The right button in 2Btn mode.
-SW2            | 1 (mode ROT)      | Rotary Encoder with push-button, (ALPS EC11E-Switch) Vertical | Selects Frequency in Rotary mode.
-U2             | 1                 | Raspberry Pi Pico                                |
-U3             | 1                 | 1x04 horizontal pin header 2.54mm pitch          | For connecting to the floppy power connector, for powering the unit.
-C1             | 1 (mode POT)      | 100pF Disc Ceramic capacitor                     | Used to reduce Potentiometer noise.
-C2,C3,C4,C5,C6 | 5 (optional UART) | 1uF Ceramic Capacitor SMD 1206                   | For MAX3232 (serial port)
-U4             | 1 (optional UART) | MAX3232 SOIC-16 5.3x10.2mm                       | For controlling the Throttle Blaster via the serial port.
+Reference      | Quantity          | Value                                                 | Description
+---------------|-------------------|-------------------------------------------------------|------------
+N/A            | 1 (recommended)   | TM1637 based 4-digit 7-segment display                | The display of the Throttle Blaster
+D1             | 1                 | Through-hole diode (preferrably Schottky 1N5817)      | Reverse polarity protection
+N/A (for Pico) | 2                 | 1x13 female through-hole pin-header 2.54mm pitch      | For attaching the Pico to the board.
+J1             | 1 (optional)      | 1x01 male through-hole angled pin-header 2.54mm pitch | For the STPCLK# cable
+J2             | 1 (optional UART) | 1x03 male through-hole pin-header 2.54mm pitch        | For controlling the Throttle Blaster via serial. (Requires MAX3232)
+JP1/JP2        | 1                 | 2x02 (or 2x 1x02) male through-hole pin-header 2.54mm | Selects mode of operation.
+SW1/SW2        | 2 (optional)      | 1x02 male through-hole pin-header 2.54mm pitch        | For the SW1 and SW2 switches
+U1             | 1 (optional)      | 1x04 male through-hole angled pin-header 2.54mm pitch | For connecting the TM1637 7-segment display.
+Jumpers        | 2                 | 2.54mm pitch Jumpers                                  | For JP1/JP2
+Q1             | 1                 | 2N7000 N-channel MOSFET                               | Pulls down the CPU's STPCLK# pin
+R1             | 1                 | 1K Resistor SMD 1206                                  | For the throttle transistor gate.
+R2             | 1                 | 100 Ohm Resistor SMD 1206                             | Between the throttle pin and the throttling transistor.
+RV1            | 1 (mode POT)      | 10K linear potentiometer                              | Selects Frequency in Potentiometer mode.
+SW1            | 1 (mode 1Btn)     | Push button                                           | Selects Frequency in 1Btn mode.
+SW3            | 1 (mode 2Btn)     | Push button                                           | The right button in 2Btn mode.
+SW2            | 1 (mode ROT)      | Rotary Encoder with push-button, (ALPS EC11E-Switch) Vertical | Selects Frequency in Rotary mode. Note: These are widely available online using keywords like: "rotary encoder switch Arduino" and they can also be found in kits with fitting knobs.
+U2             | 1                 | Raspberry Pi Pico                                     |
+U3             | 1                 | 1x04 horizontal pin header 2.54mm pitch               | For connecting to the floppy power connector, for powering the unit.
+C1             | 1 (mode POT)      | 100pF Disc Ceramic capacitor                          | Used to reduce Potentiometer noise.
+C2,C3,C4,C5,C6 | 5 (optional UART) | 1uF Ceramic Capacitor SMD 1206                        | For MAX3232 (serial port)
+U4             | 1 (optional UART) | MAX3232 SOIC-16 5.3x10.2mm                            | For controlling the Throttle Blaster via the serial port.
 
 
 
