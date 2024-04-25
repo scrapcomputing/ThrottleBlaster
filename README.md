@@ -186,7 +186,7 @@ U2             | 1                 | Raspberry Pi Pico                          
 U3             | 1                 | 1x04 horizontal pin header 2.54mm pitch               | For connecting to the floppy power connector, for powering the unit.
 C1             | 1 (mode POT)      | 100pF Disc Ceramic capacitor                          | Used to reduce Potentiometer noise.
 C2,C3,C4,C5,C6 | 5 (optional UART) | 1uF Ceramic Capacitor SMD 1206                        | For MAX3232 (serial port)
-U4             | 1 (optional UART) | MAX3232 SOIC-16 5.3x10.2mm                            | For controlling the Throttle Blaster via the serial port.
+U4             | 1 (optional UART) | MAX3232 SOIC-16 5.3x10.2mm (Commonly listed as 16-SOIC 3.90mm width) | For controlling the Throttle Blaster via the serial port.
 
 
 
