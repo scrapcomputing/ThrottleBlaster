@@ -50,22 +50,25 @@ Pico::Pico() {
   gpio_set_function(17, GPIO_FUNC_UART); // RX
 
   // Wait for a bit otherwise this does not show up during serial debug.
-  sleep_ms(500);
-  std::cerr << "+---------------------------------+\n";
-  std::cerr << "|          " << PROJECT_NAME << "\n";
-  std::cerr << "+---------------------------------+\n";
-  std::cerr << "clk_sys = " << frequency_count_khz(CLOCKS_FC0_SRC_VALUE_CLK_SYS)
-            << "KHz\n";
-  std::cerr << "clk_usb = " << frequency_count_khz(CLOCKS_FC0_SRC_VALUE_CLK_USB)
-            << "KHz\n";
-  std::cerr << "clk_peri = "
-            << frequency_count_khz(CLOCKS_FC0_SRC_VALUE_CLK_PERI) << "KHz\n";
-  std::cerr << "clk_ref = " << frequency_count_khz(CLOCKS_FC0_SRC_VALUE_CLK_REF)
-            << "KHz\n";
-  std::cerr << "clk_adc = " << frequency_count_khz(CLOCKS_FC0_SRC_VALUE_CLK_ADC)
-            << "KHz\n";
-  std::cerr << "clk_rtc = " << frequency_count_khz(CLOCKS_FC0_SRC_VALUE_CLK_RTC)
-            << "KHz\n";
+  DBG_PRINT(sleep_ms(500);)
+  DBG_PRINT(
+      std::cerr << "+---------------------------------+\n";
+      std::cerr << "|          " << PROJECT_NAME << "\n";
+      std::cerr << "+---------------------------------+\n";
+      std::cerr << "clk_sys = "
+                << frequency_count_khz(CLOCKS_FC0_SRC_VALUE_CLK_SYS) << "KHz\n";
+      std::cerr << "clk_usb = "
+                << frequency_count_khz(CLOCKS_FC0_SRC_VALUE_CLK_USB) << "KHz\n";
+      std::cerr << "clk_peri = "
+                << frequency_count_khz(CLOCKS_FC0_SRC_VALUE_CLK_PERI)
+                << "KHz\n";
+      std::cerr << "clk_ref = "
+                << frequency_count_khz(CLOCKS_FC0_SRC_VALUE_CLK_REF) << "KHz\n";
+      std::cerr << "clk_adc = "
+                << frequency_count_khz(CLOCKS_FC0_SRC_VALUE_CLK_ADC) << "KHz\n";
+      std::cerr << "clk_rtc = "
+                << frequency_count_khz(CLOCKS_FC0_SRC_VALUE_CLK_RTC)
+                << "KHz\n";)
 }
 
 void Pico::initGPIO(const PinRange &Pins, int Direction, Pull Pull,
