@@ -13,6 +13,8 @@ Videos:
 - Part 2: https://www.youtube.com/watch?v=nGy8OmOe_34
 - Part 1: https://www.youtube.com/watch?v=9uNml2j6sy0
 
+- Mounted on a 5.25 panel: https://www.youtube.com/shorts/n1aFvRNtOcw (by Michael Swimm)
+
 Download firmware (ThrottleBlaster.uf2): https://github.com/scrapcomputing/ThrottleBlaster/releases
 
 Download gerbers (ThrottleBlaster_gerbers_rev.X.X.zip): https://github.com/scrapcomputing/ThrottleBlaster/releases
