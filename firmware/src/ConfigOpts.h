@@ -70,7 +70,7 @@ static constexpr const int PotentiometerRampUpIgnoreReadings = 50;
 // A dead-zone for the min and max position of the potentiometer.
 static constexpr const int ADCDeadZone = 20;
 // ADC is noizy so take the average over this many measurements.
-static constexpr const unsigned ADCDenoise = 16;
+static constexpr const unsigned ADCDenoise = 32;
 
 // Button debounce: Take the average of this many readings.
 static constexpr const int ButtonDebounceSz = 2;
