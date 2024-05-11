@@ -130,6 +130,8 @@ void RotaryLogic::onLeft() {
     break;
   case Mode::Uart:
     setMode(Mode::Presets);
+    DC.setKHz(Presets.getActualKHz());
+    DC.setPeriod(Presets.getPeriod());
     printTxtAndSleep(MsgPresets);
     break;
   }
@@ -174,6 +176,8 @@ void RotaryLogic::onRight() {
     break;
   case Mode::Uart:
     setMode(Mode::Presets);
+    DC.setKHz(Presets.getActualKHz());
+    DC.setPeriod(Presets.getPeriod());
     printTxtAndSleep(MsgPresets);
     break;
   }
