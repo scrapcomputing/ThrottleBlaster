@@ -4,6 +4,8 @@
 #include <string>
 
 void CommonLogic::setMode(Mode NewMode) {
+  setModeInit(NewMode);
+
   BeforeMaxMHz = Presets.getMaxMHz();
   BeforePeriod = Presets.getPeriod();
   BeforeActualKHz = Presets.getActualKHz();

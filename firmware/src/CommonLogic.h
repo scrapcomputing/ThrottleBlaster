@@ -48,7 +48,8 @@ protected:
     }
     return "BAD";
   }
-
+  /// Called by setMode(). Can be overriden by implementations.
+  virtual void setModeInit(Mode NewMode) {}
   void setMode(Mode NewMode);
   void tryWritePresetsToFlash();
   Mode getMode() const { return CurrMode; }

@@ -4,8 +4,8 @@
 
 void PotentiometerLogic::uart(int PotVal, ButtonState BtnState) {
  if (EnablePot && movedPotComparedToSaved(PotVal)) {
-    setMode(Mode::Manual);
-    return;
+   setMode(Mode::Manual);
+   return;
  }
  if (BtnState != ButtonState::None) {
    setMode(Mode::Presets);
@@ -186,6 +186,12 @@ void PotentiometerLogic::configMHz(int PotVal, ButtonState BtnState) {
       Presets.decrActualKHz();
       break;
     }
+  }
+}
+
+void PotentiometerLogic::setModeInit(Mode NewMode) {
+  if (NewMode == Mode::Uart) {
+    savePotVal(Pot.get());
   }
 }
 

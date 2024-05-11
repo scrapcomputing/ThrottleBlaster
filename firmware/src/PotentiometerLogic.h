@@ -49,6 +49,8 @@ class PotentiometerLogic : public CommonLogic {
 
   void configMHz(int PotVal, ButtonState BtnState);
 
+  void setModeInit(Mode NewMode) override;
+
   int SvPotVal = 0;
   bool MovedPot = false;
 
