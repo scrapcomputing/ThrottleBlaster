@@ -5,8 +5,8 @@ $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 1
 Title "ThrottleBlaster"
-Date "2024-03-24"
-Rev "0.3"
+Date "2024-05-10"
+Rev "0.4"
 Comp "Scrap Computing"
 Comment1 ""
 Comment2 ""
@@ -324,7 +324,6 @@ Wire Wire Line
 	3400 3050 3400 2050
 Wire Wire Line
 	3400 2050 6200 2050
-NoConn ~ 6050 3650
 NoConn ~ 6050 3750
 NoConn ~ 6050 3850
 NoConn ~ 6050 3950
@@ -336,8 +335,6 @@ NoConn ~ 6050 4450
 NoConn ~ 6050 4550
 NoConn ~ 6050 4650
 NoConn ~ 5050 4650
-NoConn ~ 5050 4550
-NoConn ~ 5050 4450
 NoConn ~ 5050 4350
 NoConn ~ 5050 4250
 NoConn ~ 5050 4150
@@ -642,4 +639,34 @@ Connection ~ 6400 6100
 Connection ~ 6400 3150
 Wire Wire Line
 	6400 3150 7000 3150
+NoConn ~ 5050 4450
+NoConn ~ 5050 4550
+$Comp
+L Device:Jumper JP3
+U 1 1 663F5630
+P 6950 4900
+F 0 "JP3" H 6950 5164 50  0000 C CNN
+F 1 "ReverseDir" H 6950 5073 50  0000 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 6950 4900 50  0001 C CNN
+F 3 "~" H 6950 4900 50  0001 C CNN
+	1    6950 4900
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6250 4900 6650 4900
+Wire Wire Line
+	6250 3650 6250 4900
+Wire Wire Line
+	6250 3650 6050 3650
+$Comp
+L power:GND #PWR0120
+U 1 1 663F7820
+P 7250 4900
+F 0 "#PWR0120" H 7250 4650 50  0001 C CNN
+F 1 "GND" H 7255 4727 50  0000 C CNN
+F 2 "" H 7250 4900 50  0001 C CNN
+F 3 "" H 7250 4900 50  0001 C CNN
+	1    7250 4900
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC

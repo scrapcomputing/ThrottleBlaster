@@ -19,11 +19,9 @@ cmake_minimum_required(VERSION 3.13)
 # For example: minicom -b 115200 -D /dev/ttyACM0. Serial connection: 115200 8N1
 
 set(REVISION_MAJOR 0)
-set(REVISION_MINOR 3)
+set(REVISION_MINOR 4)
 
 message("PICO_SDK_PATH = ${PICO_SDK_PATH}")
-
-# set(PICO_EXTRAS_PATH "$ENV{HOME}/pico-extras/")
 
 # initialize the SDK based on PICO_SDK_PATH
 # note: this must happen before project()

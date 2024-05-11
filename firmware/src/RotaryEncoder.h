@@ -45,12 +45,15 @@ private:
   Buffer<InternalState, BuffSz, InternalState::A0B0> IntState;
 
   Pico &PICO;
+  bool ReverseDirection;
 
   int LongPressCnt = 0;
 
 public:
-  RotaryEncoder(int ClkPin, int DtPin, int SwPin, Pico &Pico)
-      : ClkPin(ClkPin), DtPin(DtPin), SwPin(SwPin), PICO(Pico) {
+  RotaryEncoder(int ClkPin, int DtPin, int SwPin, Pico &Pico,
+                bool ReverseDirection = false)
+      : ClkPin(ClkPin), DtPin(DtPin), SwPin(SwPin), PICO(Pico),
+        ReverseDirection(ReverseDirection) {
     PICO.initGPIO(ClkPin, GPIO_IN, Pico::Pull::Up, "Rotary.Clk");
     PICO.initGPIO(DtPin, GPIO_IN, Pico::Pull::Up, "Rotary.Dt");
     PICO.initGPIO(SwPin, GPIO_IN, Pico::Pull::Up, "Rotary.Sw");
@@ -109,14 +112,14 @@ public:
         IntState[2] == InternalState::A1B0 &&
         IntState[3] == InternalState::A1B1) {
       IntState.clear();
-      return State::Right;
+      return ReverseDirection ? State::Right : State::Left;
     }
     if (IntState[0] == InternalState::A1B0 &&
         IntState[1] == InternalState::A0B0 &&
         IntState[2] == InternalState::A0B1 &&
         IntState[3] == InternalState::A1B1) {
       IntState.clear();
-      return State::Left;
+      return ReverseDirection ? State::Left : State::Right;
     }
     return RetState;
   }

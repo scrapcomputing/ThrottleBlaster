@@ -80,9 +80,9 @@ class PotentiometerLogic : public CommonLogic {
 public:
   PotentiometerLogic(int PotGPIO, int ButtonGPIO, int SamplePeriod, Pico &Pi,
                      Display &Disp, DutyCycle &DC, PresetsTable &Presets,
-                     FlashStorage &Flash, bool EnablePot)
-      : Btn(ButtonGPIO, Pi, "Pot.Btn"), Pot(PotGPIO, Pi), Pi(Pi),
-        CommonLogic(SamplePeriod, Disp, DC, Presets, Flash),
+                     FlashStorage &Flash, bool EnablePot, bool ReverseDirection)
+      : Btn(ButtonGPIO, Pi, "Pot.Btn"), Pot(PotGPIO, Pi, ReverseDirection),
+        Pi(Pi), CommonLogic(SamplePeriod, Disp, DC, Presets, Flash),
         EnablePot(EnablePot) {
     setMode(Mode::Presets);
   }

@@ -31,8 +31,8 @@ class RotaryLogic : public CommonLogic {
 public:
   RotaryLogic(int ClkGPIO, int DtGPIO, int SwGPIO, int SamplePeriod, Pico &Pi,
               Display &Disp, PresetsTable &Presets, DutyCycle &DC,
-              FlashStorage &Flash)
-      : RotEnc(ClkGPIO, DtGPIO, SwGPIO, Pi),
+              FlashStorage &Flash, bool ReverseDirection)
+    : RotEnc(ClkGPIO, DtGPIO, SwGPIO, Pi, ReverseDirection),
         CommonLogic(SamplePeriod, Disp, DC, Presets, Flash) {
     setMode(Mode::Presets);
   }

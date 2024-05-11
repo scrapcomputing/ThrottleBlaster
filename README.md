@@ -88,6 +88,11 @@ It is tailored to the needs of vintage PC enthusiasts, so it drives a 4-digit 7-
 You can connect to the Throttle Blaster via the serial port and set the Frequency and PWM Period.
 This is convenient for launching a game with a `.bat` file that first configures the Throttle Blaster and then launches the game.
 
+
+## Reverse Direction jumper JP3 (since rev 0.4)
+Since revision 0.4 the default rotation direction of the knob has been changed and a new jumper JP3 has been added.
+Closing the jumper will reverse the direction for both the rotary encoder and the potentiometer.
+
 ## Circuit
 - Connect the Throttle Blaster's Tx pin to the PC's serial port Rx pin (that is pin 2 of the serial connector), the Throttle Blaster's Rx pin to serial Tx (pin 3) and ground to ground (pin 5)
 
@@ -174,6 +179,7 @@ N/A (for Pico) | 2                 | 1x13 female through-hole pin-header 2.54mm 
 J1             | 1 (optional)      | 1x01 male through-hole angled pin-header 2.54mm pitch | For the STPCLK# cable
 J2             | 1 (optional UART) | 1x03 male through-hole pin-header 2.54mm pitch        | For controlling the Throttle Blaster via serial. (Requires MAX3232)
 JP1/JP2        | 1                 | 2x02 (or 2x 1x02) male through-hole pin-header 2.54mm | Selects mode of operation.
+JP3            | 1                 | 1x02 male through-hole pin-header 2.54mm pitch        | For the JP3 jumper that flips the rotation direction
 SW1/SW2        | 2 (optional)      | 1x02 male through-hole pin-header 2.54mm pitch        | For the SW1 and SW2 switches
 U1             | 1 (optional)      | 1x04 male through-hole angled pin-header 2.54mm pitch | For connecting the TM1637 7-segment display.
 Jumpers        | 2                 | 2.54mm pitch Jumpers                                  | For JP1/JP2
@@ -196,6 +202,7 @@ U4             | 1 (optional UART) | MAX3232 SOIC-16 5.3x10.2mm (Commonly listed
 - Select the operation mode using jumpers JP1/JP2.
 - Connect J1 to your CPU's STPCLK# pin.
 - Power it on and you are good to go.
+- You can reverse the knob direction by closing JP3 (since rev.0.4)
 
 
 ## How to find the `STPCLK#` pin
@@ -218,6 +225,7 @@ This table lists the STPCLK# pin number for your reference:
 <img src='img/stpclk_pin_socketA.jpg' height=200 width=auto>
 
 # Change Log
+- Rev 0.4: Reverses knob direction and adds jumper JP3 for selecting direction.
 - Rev 0.3: Adds UART support in both firmware and PCB.
 - Rev 0.2: Adds two-button mode "2Btn".
 - Rev 0.1: Initial release.

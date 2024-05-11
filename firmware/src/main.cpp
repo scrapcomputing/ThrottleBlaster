@@ -120,17 +120,22 @@ static void core0_main_loop(Pico &Pico, Display &Disp, FlashStorage &Flash,
   auto Mode = getUIMode(Pico);
   DBG_PRINT(std::cout << "Mode=" << getUIModeStr(Mode) << "\n";)
   switch (Mode) {
-  case UIMode::Rotary:
-    UI = std::make_unique<RotaryLogic>(RotaryClkGPIO, RotaryDtGPIO,
-                                       RotarySwGPIO, RotaryEncoderSamplePeriod,
-                                       Pico, Disp, Presets, DC, Flash);
+  case UIMode::Rotary: {
+    bool ReverseDirection = Pico.getGPIO(ReverseDirectionGPIO);
+    UI = std::make_unique<RotaryLogic>(
+        RotaryClkGPIO, RotaryDtGPIO, RotarySwGPIO, RotaryEncoderSamplePeriod,
+        Pico, Disp, Presets, DC, Flash, ReverseDirection);
     break;
+  }
   case UIMode::Button:
-  case UIMode::ButtonWithPot:
+  case UIMode::ButtonWithPot: {
+    bool ReverseDirection = Pico.getGPIO(ReverseDirectionGPIO);
     UI = std::make_unique<PotentiometerLogic>(
         PotentiometerGPIO, LeftButtonGPIO, PotSamplePeriod, Pico, Disp, DC,
-        Presets, Flash, /*EnablePot=*/Mode == UIMode::ButtonWithPot);
+        Presets, Flash, /*EnablePot=*/Mode == UIMode::ButtonWithPot,
+        ReverseDirection);
     break;
+  }
   case UIMode::TwoButton:
     UI = std::make_unique<TwoButtonLogic>(LeftButtonGPIO, RightButtonGPIO,
                                           ButtonSamplePeriod, Pico, Disp, DC,
@@ -165,6 +170,9 @@ int main() {
 
   Pico.initGPIO(ModeJP1GPIO, GPIO_IN, Pico::Pull::Up, "ModeJP1");
   Pico.initGPIO(ModeJP2GPIO, GPIO_IN, Pico::Pull::Up, "ModeJP2");
+
+  Pico.initGPIO(ReverseDirectionGPIO, GPIO_IN, Pico::Pull::Up,
+                "ReverseDirectionJP");
 
   Display Disp(DisplayClkGPIO, DisplayDioGPIO);
 

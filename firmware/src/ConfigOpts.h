@@ -27,6 +27,8 @@ static constexpr const int ModeJP2GPIO = 6;
 static constexpr const int PotentiometerGPIO = 28;
 // UART
 static constexpr const int UartGPIO = 8; // (also UartGPIO+1)
+// Reverse knob direction.
+static constexpr const int ReverseDirectionGPIO = 26;
 
 // Uart configuration 9600 8N1
 static constexpr const uint32_t UartRequestedBaud = 9600;
