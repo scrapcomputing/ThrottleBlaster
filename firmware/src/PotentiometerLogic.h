@@ -86,7 +86,9 @@ public:
       : Btn(ButtonGPIO, Pi, "Pot.Btn"), Pot(PotGPIO, Pi, ReverseDirection),
         Pi(Pi), CommonLogic(SamplePeriod, Disp, DC, Presets, Flash),
         EnablePot(EnablePot) {
-    setMode(Mode::Presets);
+    // One of the potentiometer's best features is that it remembers its
+    // positions across rrestarts. So start in manual mode to make use of it.
+    setMode(Mode::Manual);
   }
   void tick() final;
 };
