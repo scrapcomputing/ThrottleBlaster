@@ -209,6 +209,14 @@ This table lists the STPCLK# pin number for your reference:
  Pentium-iii slot1    | B6
  Athlon XP            | AC1
 
+<img src='img/stpclk_pin_socket7.jpg' height=200 width=auto>
+
+<img src='img/stpclk_pin_slot1.jpg' height=200 width=auto>
+
+<img src='img/stpclk_pin_socket370.jpg' height=200 width=auto>
+
+<img src='img/stpclk_pin_socketA.jpg' height=200 width=auto>
+
 # Change Log
 - Rev 0.3: Adds UART support in both firmware and PCB.
 - Rev 0.2: Adds two-button mode "2Btn".
