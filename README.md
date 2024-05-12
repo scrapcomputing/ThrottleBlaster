@@ -224,6 +224,17 @@ This table lists the STPCLK# pin number for your reference:
 
 <img src='img/stpclk_pin_socketA.jpg' height=200 width=auto>
 
+# How about older CPUs that don't have a STPCLK pin?
+486 or older CPUs don't usually have a STPCLK# pin.
+Instead they have the HOLD pin which has somewhat similar functionality and is active high.
+Some boards use PWM on this HOLD pin when the Turbo button is pressed.
+
+The HOLD pin is not pulled down internally by the CPU.
+So it is up to the motherboard to pull it down.
+The problem is that this is usually actively pulled down by the CPU chipset, meaning that if we try to pull it up with the Throttle Blaster we may damage the chipset.
+So I don't think there is a way to get the Throttle Blaster to work universally with older systems.
+
+
 # Change Log
 - Rev 0.4: Reverses knob direction and adds jumper JP3 for selecting direction.
 - Rev 0.3: Adds UART support in both firmware and PCB.
