@@ -5,8 +5,8 @@ $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 1
 Title "ThrottleBlaster"
-Date "2024-05-10"
-Rev "0.4"
+Date "2024-05-11"
+Rev "0.5"
 Comp "Scrap Computing"
 Comment1 ""
 Comment2 ""
@@ -377,7 +377,7 @@ U 1 1 65F774D8
 P 6700 3500
 F 0 "C1" H 6815 3546 50  0000 L CNN
 F 1 "100pF" H 6815 3455 50  0000 L CNN
-F 2 "Capacitor_THT:C_Disc_D3.0mm_W1.6mm_P2.50mm" H 6738 3350 50  0001 C CNN
+F 2 "Capacitor_SMD:C_1206_3216Metric_Pad1.33x1.80mm_HandSolder" H 6738 3350 50  0001 C CNN
 F 3 "~" H 6700 3500 50  0001 C CNN
 	1    6700 3500
 	1    0    0    -1  

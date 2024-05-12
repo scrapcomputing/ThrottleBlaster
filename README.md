@@ -192,7 +192,7 @@ SW3            | 1 (mode 2Btn)     | Push button                                
 SW2            | 1 (mode ROT)      | Rotary Encoder with push-button, (ALPS EC11E-Switch) Vertical | Selects Frequency in Rotary mode. Note: These are widely available online using keywords like: "rotary encoder switch Arduino" and they can also be found in kits with fitting knobs.
 U2             | 1                 | Raspberry Pi Pico                                     |
 U3             | 1                 | 1x04 horizontal pin header 2.54mm pitch               | For connecting to the floppy power connector, for powering the unit.
-C1             | 1 (mode POT)      | 100pF Disc Ceramic capacitor                          | Used to reduce Potentiometer noise.
+C1             | 1 (mode POT)      | 100pF Ceramic capacitor SMD 1205                      | Used to reduce potentiometer noise.
 C2,C3,C4,C5,C6 | 5 (optional UART) | 1uF Ceramic Capacitor SMD 1206                        | For MAX3232 (serial port)
 U4             | 1 (optional UART) | MAX3232 SOIC-16 5.3x10.2mm (Commonly listed as 16-SOIC 3.90mm width) | For controlling the Throttle Blaster via the serial port.
 
@@ -236,6 +236,7 @@ So I don't think there is a way to get the Throttle Blaster to work universally 
 
 
 # Change Log
+- Rev 0.5: Replaces potentiometer capacitor with SMD and several firmware fixes.
 - Rev 0.4: Reverses knob direction and adds jumper JP3 for selecting direction.
 - Rev 0.3: Adds UART support in both firmware and PCB.
 - Rev 0.2: Adds two-button mode "2Btn".
