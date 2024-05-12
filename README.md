@@ -14,10 +14,13 @@ Videos:
 - Part 1: https://www.youtube.com/watch?v=9uNml2j6sy0
 
 - Mounted on a 5.25 panel: https://www.youtube.com/shorts/n1aFvRNtOcw (by Michael Swimm)
+- Controllable by serial: https://www.youtube.com/watch?v=71rln-R2mis (by Michael Swimm)
 
 Download firmware (ThrottleBlaster.uf2): https://github.com/scrapcomputing/ThrottleBlaster/releases
 
 Download gerbers (ThrottleBlaster_gerbers_rev.X.X.zip): https://github.com/scrapcomputing/ThrottleBlaster/releases
+
+A front panel design by Michael Swimm: https://www.thingiverse.com/thing:6619261
 
 # How it works
 The Throttle Blaster is a fancy PWM controller that pulls the CPU's STPCLK# to ground.
