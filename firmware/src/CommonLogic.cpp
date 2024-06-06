@@ -27,6 +27,9 @@ void CommonLogic::tryWritePresetsToFlash() {
     DBG_PRINT(std::cout << "MaxMHz:    " << BeforeMaxMHz << " "
                         << Presets.getMaxMHz() << "\n";)
     Presets.writeToFlash(Flash);
+  } else {
+    DBG_PRINT(
+        std::cout << "Not writing to flash (no change in KHz/Period/MaxMHz)\n";)
   }
 }
 

@@ -170,6 +170,7 @@ void PotentiometerLogic::configMHz(int PotVal, ButtonState BtnState) {
     Presets.decrActualKHz();
     return;
   case ButtonState::LongPress:
+    tryWritePresetsToFlash();
     Disp.setFlash(false);
     printTxtAndSleep(MsgPeriod);
     Disp.setFlash(true);

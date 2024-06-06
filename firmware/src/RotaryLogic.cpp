@@ -24,14 +24,15 @@ void RotaryLogic::onSwRelease() {
     printTxtAndSleep(MsgPresets);
     break;
   case Mode::ConfigMHz:
+    tryWritePresetsToFlash();
     setMode(Mode::ConfigPeriod);
     Disp.setFlash(false);
     printTxtAndSleep(MsgPeriod);
     Disp.setFlash(true);
     break;
   case Mode::ConfigPeriod:
-    setMode(Mode::Presets);
     tryWritePresetsToFlash();
+    setMode(Mode::Presets);
     Disp.setFlash(false);
     printTxtAndSleep(MsgConfirm);
     break;

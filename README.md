@@ -239,6 +239,7 @@ So I don't think there is a way to get the Throttle Blaster to work universally 
 
 
 # Change Log
+- Rev 0.6: Firmware bug fixes: not saving MHz/Period adjustments to flash.
 - Rev 0.5: Replaces potentiometer capacitor with SMD and several firmware fixes.
 - Rev 0.4: Reverses knob direction and adds jumper JP3 for selecting direction.
 - Rev 0.3: Adds UART support in both firmware and PCB.
