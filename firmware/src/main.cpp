@@ -51,7 +51,7 @@ const char *getUIModeStr(UIMode Mode) {
   case UIMode::TwoButton:
     return "TwoButton";
   case UIMode::Button:
-    return "Button";
+    return "OneButton";
   case UIMode::ButtonWithPot:
     return "ButtonWithPot";
   }

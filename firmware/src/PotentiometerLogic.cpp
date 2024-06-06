@@ -32,8 +32,10 @@ void PotentiometerLogic::manual(int PotVal, ButtonState BtnState) {
     Disp.setFlash(true);
     return;
   }
-  int MaxKHz = Presets.getMaxKHz();
-  DC.setKHz(PotVal * MaxKHz / PotMaxVal);
+  if (EnablePot) {
+    int MaxKHz = Presets.getMaxKHz();
+    DC.setKHz(PotVal * MaxKHz / PotMaxVal);
+  }
 }
 
 void PotentiometerLogic::cyclePresets(int PotVal, ButtonState BtnState) {
