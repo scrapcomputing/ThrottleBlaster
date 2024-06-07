@@ -5,8 +5,8 @@ $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 1
 Title "ThrottleBlaster"
-Date "2024-05-11"
-Rev "0.5"
+Date "2024-06-06"
+Rev "0.7"
 Comp "Scrap Computing"
 Comment1 ""
 Comment2 ""
@@ -58,10 +58,10 @@ F 3 "~" H 2250 4050 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Device:R_POT RV1
+L Device:R_POT Pot1
 U 1 1 65F5DC08
 P 7000 3300
-F 0 "RV1" H 6930 3254 50  0000 R CNN
+F 0 "Pot1" H 6930 3254 50  0000 R CNN
 F 1 "10K" H 6930 3345 50  0000 R CNN
 F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical" H 7000 3300 50  0001 C CNN
 F 3 "~" H 7000 3300 50  0001 C CNN
@@ -326,20 +326,10 @@ Wire Wire Line
 	3400 2050 6200 2050
 NoConn ~ 6050 3750
 NoConn ~ 6050 3850
-NoConn ~ 6050 3950
-NoConn ~ 6050 4050
-NoConn ~ 6050 4150
-NoConn ~ 6050 4250
-NoConn ~ 6050 4350
 NoConn ~ 6050 4450
 NoConn ~ 6050 4550
 NoConn ~ 6050 4650
 NoConn ~ 5050 4650
-NoConn ~ 5050 4350
-NoConn ~ 5050 4250
-NoConn ~ 5050 4150
-NoConn ~ 5050 4050
-NoConn ~ 5050 3950
 NoConn ~ 6050 3250
 NoConn ~ 6050 3050
 NoConn ~ 6050 2750
@@ -453,8 +443,6 @@ $EndComp
 Connection ~ 6200 2200
 Wire Wire Line
 	6200 2200 6200 2850
-Wire Wire Line
-	4900 3750 5050 3750
 $Comp
 L ThrottleBlaster:RaspberryPi_Pico U2
 U 1 1 65F5261C
@@ -468,8 +456,6 @@ F 3 "" H 3750 1400 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	6200 6100 6400 6100
-Wire Wire Line
-	4900 3750 4900 5300
 Wire Wire Line
 	4500 5300 4500 3850
 Wire Wire Line
@@ -652,12 +638,6 @@ F 3 "~" H 6950 4900 50  0001 C CNN
 	1    6950 4900
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	6250 4900 6650 4900
-Wire Wire Line
-	6250 3650 6250 4900
-Wire Wire Line
-	6250 3650 6050 3650
 $Comp
 L power:GND #PWR0120
 U 1 1 663F7820
@@ -667,6 +647,250 @@ F 1 "GND" H 7255 4727 50  0000 C CNN
 F 2 "" H 7250 4900 50  0001 C CNN
 F 3 "" H 7250 4900 50  0001 C CNN
 	1    7250 4900
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0121
+U 1 1 666266FF
+P 5050 3950
+F 0 "#PWR0121" H 5050 3700 50  0001 C CNN
+F 1 "GND" V 5055 3822 50  0000 R CNN
+F 2 "" H 5050 3950 50  0001 C CNN
+F 3 "" H 5050 3950 50  0001 C CNN
+	1    5050 3950
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR0122
+U 1 1 66626E9F
+P 6050 3950
+F 0 "#PWR0122" H 6050 3700 50  0001 C CNN
+F 1 "GND" V 6055 3822 50  0000 R CNN
+F 2 "" H 6050 3950 50  0001 C CNN
+F 3 "" H 6050 3950 50  0001 C CNN
+	1    6050 3950
+	0    -1   -1   0   
+$EndComp
+Text GLabel 5050 4050 0    50   Input ~ 0
+PRE1
+Text GLabel 5050 4150 0    50   Input ~ 0
+PRE2
+Text GLabel 5050 4250 0    50   Input ~ 0
+PRE3
+Text GLabel 5050 4350 0    50   Input ~ 0
+PRE4
+Text GLabel 6050 4350 2    50   Input ~ 0
+PRE5
+Text GLabel 6050 4250 2    50   Input ~ 0
+PRE6
+Text GLabel 6050 4150 2    50   Input ~ 0
+PRE7
+Text GLabel 6050 4050 2    50   Input ~ 0
+PRE8
+Wire Wire Line
+	6350 3650 6350 4900
+Wire Wire Line
+	6350 4900 6650 4900
+Wire Wire Line
+	6050 3650 6350 3650
+Wire Wire Line
+	4750 3750 4750 5000
+Wire Wire Line
+	4750 5000 4900 5000
+Wire Wire Line
+	4900 5000 4900 5300
+Wire Wire Line
+	4750 3750 5050 3750
+$Comp
+L Switch:SW_Push P1
+U 1 1 6662D7D8
+P 7200 5900
+F 0 "P1" V 7246 5852 50  0000 R CNN
+F 1 "SW_Push" V 7155 5852 50  0000 R CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 7200 6100 50  0001 C CNN
+F 3 "~" H 7200 6100 50  0001 C CNN
+	1    7200 5900
+	0    -1   -1   0   
+$EndComp
+Text GLabel 7200 5700 1    50   Input ~ 0
+PRE1
+$Comp
+L Switch:SW_Push P2
+U 1 1 6662F096
+P 7700 5900
+F 0 "P2" V 7746 5852 50  0000 R CNN
+F 1 "SW_Push" V 7655 5852 50  0000 R CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 7700 6100 50  0001 C CNN
+F 3 "~" H 7700 6100 50  0001 C CNN
+	1    7700 5900
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Switch:SW_Push P3
+U 1 1 6662FBAD
+P 8200 5900
+F 0 "P3" V 8246 5852 50  0000 R CNN
+F 1 "SW_Push" V 8155 5852 50  0000 R CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 8200 6100 50  0001 C CNN
+F 3 "~" H 8200 6100 50  0001 C CNN
+	1    8200 5900
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Switch:SW_Push P4
+U 1 1 66630452
+P 8700 5900
+F 0 "P4" V 8746 5852 50  0000 R CNN
+F 1 "SW_Push" V 8655 5852 50  0000 R CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 8700 6100 50  0001 C CNN
+F 3 "~" H 8700 6100 50  0001 C CNN
+	1    8700 5900
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Switch:SW_Push P5
+U 1 1 66630CF7
+P 9200 5900
+F 0 "P5" V 9246 5852 50  0000 R CNN
+F 1 "SW_Push" V 9155 5852 50  0000 R CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 9200 6100 50  0001 C CNN
+F 3 "~" H 9200 6100 50  0001 C CNN
+	1    9200 5900
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Switch:SW_Push P6
+U 1 1 666313AC
+P 9700 5900
+F 0 "P6" V 9746 5852 50  0000 R CNN
+F 1 "SW_Push" V 9655 5852 50  0000 R CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 9700 6100 50  0001 C CNN
+F 3 "~" H 9700 6100 50  0001 C CNN
+	1    9700 5900
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Switch:SW_Push P7
+U 1 1 66631A2B
+P 10200 5900
+F 0 "P7" V 10246 5852 50  0000 R CNN
+F 1 "SW_Push" V 10155 5852 50  0000 R CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 10200 6100 50  0001 C CNN
+F 3 "~" H 10200 6100 50  0001 C CNN
+	1    10200 5900
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Switch:SW_Push P8
+U 1 1 6663226F
+P 10700 5900
+F 0 "P8" V 10746 5852 50  0000 R CNN
+F 1 "SW_Push" V 10655 5852 50  0000 R CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 10700 6100 50  0001 C CNN
+F 3 "~" H 10700 6100 50  0001 C CNN
+	1    10700 5900
+	0    -1   -1   0   
+$EndComp
+Text GLabel 7700 5700 1    50   Input ~ 0
+PRE2
+Text GLabel 8200 5700 1    50   Input ~ 0
+PRE3
+Text GLabel 8700 5700 1    50   Input ~ 0
+PRE4
+Text GLabel 9200 5700 1    50   Input ~ 0
+PRE5
+Text GLabel 9700 5700 1    50   Input ~ 0
+PRE6
+Text GLabel 10200 5700 1    50   Input ~ 0
+PRE7
+Text GLabel 10700 5700 1    50   Input ~ 0
+PRE8
+$Comp
+L power:GND #PWR0123
+U 1 1 66637514
+P 7200 6100
+F 0 "#PWR0123" H 7200 5850 50  0001 C CNN
+F 1 "GND" H 7205 5927 50  0000 C CNN
+F 2 "" H 7200 6100 50  0001 C CNN
+F 3 "" H 7200 6100 50  0001 C CNN
+	1    7200 6100
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0124
+U 1 1 66637A9F
+P 7700 6100
+F 0 "#PWR0124" H 7700 5850 50  0001 C CNN
+F 1 "GND" H 7705 5927 50  0000 C CNN
+F 2 "" H 7700 6100 50  0001 C CNN
+F 3 "" H 7700 6100 50  0001 C CNN
+	1    7700 6100
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0125
+U 1 1 66638036
+P 8200 6100
+F 0 "#PWR0125" H 8200 5850 50  0001 C CNN
+F 1 "GND" H 8205 5927 50  0000 C CNN
+F 2 "" H 8200 6100 50  0001 C CNN
+F 3 "" H 8200 6100 50  0001 C CNN
+	1    8200 6100
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0126
+U 1 1 666385D9
+P 8700 6100
+F 0 "#PWR0126" H 8700 5850 50  0001 C CNN
+F 1 "GND" H 8705 5927 50  0000 C CNN
+F 2 "" H 8700 6100 50  0001 C CNN
+F 3 "" H 8700 6100 50  0001 C CNN
+	1    8700 6100
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0127
+U 1 1 66638B88
+P 9200 6100
+F 0 "#PWR0127" H 9200 5850 50  0001 C CNN
+F 1 "GND" H 9205 5927 50  0000 C CNN
+F 2 "" H 9200 6100 50  0001 C CNN
+F 3 "" H 9200 6100 50  0001 C CNN
+	1    9200 6100
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0128
+U 1 1 66639143
+P 9700 6100
+F 0 "#PWR0128" H 9700 5850 50  0001 C CNN
+F 1 "GND" H 9705 5927 50  0000 C CNN
+F 2 "" H 9700 6100 50  0001 C CNN
+F 3 "" H 9700 6100 50  0001 C CNN
+	1    9700 6100
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0129
+U 1 1 6663970A
+P 10200 6100
+F 0 "#PWR0129" H 10200 5850 50  0001 C CNN
+F 1 "GND" H 10205 5927 50  0000 C CNN
+F 2 "" H 10200 6100 50  0001 C CNN
+F 3 "" H 10200 6100 50  0001 C CNN
+	1    10200 6100
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0130
+U 1 1 66639CDD
+P 10700 6100
+F 0 "#PWR0130" H 10700 5850 50  0001 C CNN
+F 1 "GND" H 10705 5927 50  0000 C CNN
+F 2 "" H 10700 6100 50  0001 C CNN
+F 3 "" H 10700 6100 50  0001 C CNN
+	1    10700 6100
 	1    0    0    -1  
 $EndComp
 $EndSCHEMATC

@@ -91,6 +91,17 @@ It is tailored to the needs of vintage PC enthusiasts, so it drives a 4-digit 7-
 You can connect to the Throttle Blaster via the serial port and set the Frequency and PWM Period.
 This is convenient for launching a game with a `.bat` file that first configures the Throttle Blaster and then launches the game.
 
+# Preset Buttons (since rev 0.7 )
+Since revision 0.7 you can also directly select a preset by pushing one of the 8 available buttons.
+This functionality is compatible with all other modes of operation.
+
+Please note that you don't need a Rev 0.7 PCB to use this feature.
+You can simply connect buttons to the Pico's GPIOs, with one button pin to the GPIO and the other to ground, see table below:
+
+
+ GPIO       | 10 | 11 | 12 | 13 | 18 | 19 | 20  | 21  
+------------|----|----|----|----|----|----|-----|-----
+ Freq (MHz) |  4 |  8 | 10 | 25 | 33 | 66 | 133 | Max 
 
 ## Reverse Direction jumper JP3 (since rev 0.4)
 Since revision 0.4 the default rotation direction of the knob has been changed and a new jumper JP3 has been added.
@@ -189,9 +200,10 @@ Jumpers        | 2                 | 2.54mm pitch Jumpers                       
 Q1             | 1                 | 2N7000 N-channel MOSFET                               | Pulls down the CPU's STPCLK# pin
 R1             | 1                 | 1K Resistor SMD 1206                                  | For the throttle transistor gate.
 R2             | 1                 | 100 Ohm Resistor SMD 1206                             | Between the throttle pin and the throttling transistor.
-RV1            | 1 (mode POT)      | 10K linear potentiometer                              | Selects Frequency in Potentiometer mode.
+Pot1           | 1 (mode POT)      | 10K linear potentiometer                              | Selects Frequency in Potentiometer mode.
 SW1            | 1 (mode 1Btn)     | Push button                                           | Selects Frequency in 1Btn mode.
 SW3            | 1 (mode 2Btn)     | Push button                                           | The right button in 2Btn mode.
+Preset Btns P1-P8| 8 (optional)      | 1x02 (or one 8x02) male through-hole pin-header 2.54mm| Headers for the 8 preset push-buttons.
 SW2            | 1 (mode ROT)      | Rotary Encoder with push-button, (ALPS EC11E-Switch) Vertical | Selects Frequency in Rotary mode. Note: These are widely available online using keywords like: "rotary encoder switch Arduino" and they can also be found in kits with fitting knobs.
 U2             | 1                 | Raspberry Pi Pico                                     |
 U3             | 1                 | 1x04 horizontal pin header 2.54mm pitch               | For connecting to the floppy power connector, for powering the unit.
@@ -239,6 +251,7 @@ So I don't think there is a way to get the Throttle Blaster to work universally 
 
 
 # Change Log
+- Rev 0.7: Adds support for 8 preset buttons.
 - Rev 0.6: Firmware bug fixes: (i) fix saving MHz/Period adjustments to flash and (ii) one-button mode frequency glitch.
 - Rev 0.5: Replaces potentiometer capacitor with SMD and several firmware fixes.
 - Rev 0.4: Reverses knob direction and adds jumper JP3 for selecting direction.

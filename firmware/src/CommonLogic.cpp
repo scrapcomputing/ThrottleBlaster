@@ -125,12 +125,28 @@ void CommonLogic::presetBtnsTick() {
       else
         // The last preset always sets max frequency.
         Presets.cycleMax();
+      int NewKHz = Presets.getActualKHz();
+      int NewPeriod = Presets.getPeriod();
+      DBG_PRINT(std::cout << "NewKHz=" << NewKHz << " NewPeriod=" << NewPeriod
+                          << "\n";)
+      DC.setKHz(NewKHz);
+      DC.setPeriod(NewPeriod);
+      DBG_PRINT(DC.dump();)
       break;
     }
     default:
       break;
     }
   };
-  for (int BtnIdx = 0, E = (int)PresetBtns.size(); BtnIdx != E; ++BtnIdx)
-    HandleBtn(PresetBtns[BtnIdx], BtnIdx, /*IsLast=*/BtnIdx == E - 1);
+
+  switch (CurrMode) {
+  case Mode::Presets:
+  case Mode::Manual:{
+    for (int BtnIdx = 0, E = (int)PresetBtns.size(); BtnIdx != E; ++BtnIdx)
+      HandleBtn(PresetBtns[BtnIdx], BtnIdx, /*IsLast=*/BtnIdx == E - 1);
+    break;
+  }
+  default:
+    break;
+  }
 }
