@@ -84,7 +84,7 @@ public:
                      Display &Disp, DutyCycle &DC, PresetsTable &Presets,
                      FlashStorage &Flash, bool EnablePot, bool ReverseDirection)
       : Btn(ButtonGPIO, Pi, "Pot.Btn"), Pot(PotGPIO, Pi, ReverseDirection),
-        Pi(Pi), CommonLogic(SamplePeriod, Disp, DC, Presets, Flash),
+        Pi(Pi), CommonLogic(SamplePeriod, Disp, DC, Presets, Flash, Pi),
         EnablePot(EnablePot) {
     // One of the potentiometer's best features is that it remembers its
     // positions across rrestarts. So start in manual mode to make use of it.

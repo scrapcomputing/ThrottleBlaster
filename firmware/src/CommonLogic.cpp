@@ -111,3 +111,26 @@ void CommonLogic::uartTick(Uart &Uart) {
   }
   UartStr.clear();
 }
+
+void CommonLogic::presetBtnsTick() {
+  auto HandleBtn = [this](auto &Btn, int BtnIdx, bool IsLast) {
+    switch (Btn.get()) {
+    case ButtonState::Release:
+    case ButtonState::MedRelease:
+    case ButtonState::LongPress: {
+      DBG_PRINT(std::cout << "PresetBtn " << BtnIdx << " IsLast=" << IsLast
+                          << "\n";)
+      if (!IsLast)
+        Presets.setIdx(BtnIdx);
+      else
+        // The last preset always sets max frequency.
+        Presets.cycleMax();
+      break;
+    }
+    default:
+      break;
+    }
+  };
+  for (int BtnIdx = 0, E = (int)PresetBtns.size(); BtnIdx != E; ++BtnIdx)
+    HandleBtn(PresetBtns[BtnIdx], BtnIdx, /*IsLast=*/BtnIdx == E - 1);
+}

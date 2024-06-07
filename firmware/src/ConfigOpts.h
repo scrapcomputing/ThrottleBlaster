@@ -6,6 +6,7 @@
 #define __CONFIGOPTS_H__
 
 #include <hardware/uart.h>
+#include <vector>
 
 // GPIOs
 // Display
@@ -18,6 +19,9 @@ static constexpr const int RotarySwGPIO = 4;
 // Buttons
 static constexpr const int LeftButtonGPIO = RotarySwGPIO;
 static constexpr const int RightButtonGPIO = 7;
+// Buttons for presets
+static std::vector<int> PresetBtnGPIOs = {10, 11, 12, 13, 18, 19, 20, 21};
+
 // Throttle pin
 static constexpr const int ThrottleGPIO = 27;
 // Jumpers

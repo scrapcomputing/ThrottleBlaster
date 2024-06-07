@@ -33,7 +33,7 @@ public:
               Display &Disp, PresetsTable &Presets, DutyCycle &DC,
               FlashStorage &Flash, bool ReverseDirection)
     : RotEnc(ClkGPIO, DtGPIO, SwGPIO, Pi, ReverseDirection),
-        CommonLogic(SamplePeriod, Disp, DC, Presets, Flash) {
+      CommonLogic(SamplePeriod, Disp, DC, Presets, Flash, Pi) {
     setMode(Mode::Presets);
   }
   RotaryLogic(const RotaryLogic &) = delete;

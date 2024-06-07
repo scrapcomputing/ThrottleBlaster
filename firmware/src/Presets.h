@@ -80,6 +80,7 @@ public:
   void decrPeriod();
   void prev() { Idx = std::max(0, Idx - 1); }
   void next() { Idx = std::min(getMaxIdx(), Idx + 1); }
+  void setIdx(int NewIdx) { Idx = std::clamp(NewIdx, 0, getMaxIdx()); }
   void cyclePrev();
   void cycleNext();
   void cycleMax();

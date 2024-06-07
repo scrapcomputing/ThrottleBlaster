@@ -6,6 +6,7 @@
 #ifndef __COMMONLOGIC_H__
 #define __COMMONLOGIC_H__
 
+#include "Button.h"
 #include "Debug.h"
 #include "Display.h"
 #include "DutyCycle.h"
@@ -13,6 +14,7 @@
 #include "Presets.h"
 #include "Uart.h"
 #include <sstream>
+#include <vector>
 
 class CommonLogic {
 protected:
@@ -69,6 +71,10 @@ protected:
   int BeforeActualKHz = 0;
   int BeforePeriod = 0;
 
+  std::vector<Button</*OffVal=*/true, ButtonDebounceSz, ButtonLongPressCnt,
+                     ButtonMedReleaseCnt>>
+      PresetBtns;
+
   void printTxtAndSleep(const char *Str);
 
   void updateDisplay();
@@ -76,17 +82,24 @@ protected:
   static constexpr const size_t MaxUartStrSz = 10;
   std::string UartStr;
   void uartTick(Uart &Uart);
+  void presetBtnsTick();
 
   virtual void tick() = 0;
 
 public:
   CommonLogic(int SamplePeriod, Display &Disp, DutyCycle &DC,
-              PresetsTable &Presets, FlashStorage &Flash)
+              PresetsTable &Presets, FlashStorage &Flash, Pico &Pi)
       : SamplePeriod(SamplePeriod), Disp(Disp), DC(DC), Presets(Presets),
-        Flash(Flash) {}
+        Flash(Flash) {
+    for (int BtnIdx = 0, E = PresetBtnGPIOs.size(); BtnIdx != E; ++BtnIdx) {
+      std::string BtnStr = "PresetBtn." + std::to_string(BtnIdx);
+      PresetBtns.emplace_back(PresetBtnGPIOs[BtnIdx], Pi, BtnStr.c_str());
+    }
+  }
   void tickAll(Uart &Uart) {
     tick();
     uartTick(Uart);
+    presetBtnsTick();
   }
 };
 
