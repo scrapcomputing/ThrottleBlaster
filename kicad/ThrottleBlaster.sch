@@ -6,7 +6,7 @@ encoding utf-8
 Sheet 1 1
 Title "ThrottleBlaster"
 Date "2024-06-06"
-Rev "0.7"
+Rev "0.8"
 Comp "Scrap Computing"
 Comment1 ""
 Comment2 ""
@@ -325,7 +325,6 @@ Wire Wire Line
 Wire Wire Line
 	3400 2050 6200 2050
 NoConn ~ 6050 3750
-NoConn ~ 6050 3850
 NoConn ~ 6050 4450
 NoConn ~ 6050 4550
 NoConn ~ 6050 4650
@@ -893,4 +892,73 @@ F 3 "" H 10700 6100 50  0001 C CNN
 	1    10700 6100
 	1    0    0    -1  
 $EndComp
+Text GLabel 6050 3850 2    50   Input ~ 0
+RESET
+$Comp
+L power:GND #PWR0131
+U 1 1 6669841E
+P 10750 4450
+F 0 "#PWR0131" H 10750 4200 50  0001 C CNN
+F 1 "GND" H 10755 4277 50  0000 C CNN
+F 2 "" H 10750 4450 50  0001 C CNN
+F 3 "" H 10750 4450 50  0001 C CNN
+	1    10750 4450
+	1    0    0    -1  
+$EndComp
+Text GLabel 9400 4350 0    50   Input ~ 0
+RESET
+$Comp
+L Connector:Conn_01x02_Male RES1
+U 1 1 66699A06
+P 10450 4450
+F 0 "RES1" H 10350 4400 50  0000 C CNN
+F 1 "Conn_01x02_Male" H 10500 4150 50  0000 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Horizontal" H 10450 4450 50  0001 C CNN
+F 3 "~" H 10450 4450 50  0001 C CNN
+	1    10450 4450
+	-1   0    0    1   
+$EndComp
+$Comp
+L power:GND #PWR0132
+U 1 1 6669A5C1
+P 10250 4450
+F 0 "#PWR0132" H 10250 4200 50  0001 C CNN
+F 1 "GND" H 10255 4277 50  0000 C CNN
+F 2 "" H 10250 4450 50  0001 C CNN
+F 3 "" H 10250 4450 50  0001 C CNN
+	1    10250 4450
+	1    0    0    -1  
+$EndComp
+$Comp
+L Transistor_FET:2N7000 Q2
+U 1 1 6666B520
+P 9600 4250
+F 0 "Q2" V 9849 4250 50  0000 C CNN
+F 1 "2N7000" V 9940 4250 50  0000 C CNN
+F 2 "Package_TO_SOT_THT:TO-92_Inline" H 9800 4175 50  0001 L CIN
+F 3 "https://www.onsemi.com/pub/Collateral/NDS7002A-D.PDF" H 9600 4250 50  0001 L CNN
+	1    9600 4250
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	9800 4350 10250 4350
+Wire Wire Line
+	10750 4350 10250 4350
+Connection ~ 10250 4350
+$Comp
+L Connector:Conn_01x02_Male RES2
+U 1 1 66679526
+P 10950 4450
+F 0 "RES2" H 10950 4400 50  0000 R CNN
+F 1 "Conn_01x02_Male" H 11000 4150 50  0000 R CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Horizontal" H 10950 4450 50  0001 C CNN
+F 3 "~" H 10950 4450 50  0001 C CNN
+	1    10950 4450
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	7000 3150 9600 3150
+Wire Wire Line
+	9600 3150 9600 4050
+Connection ~ 7000 3150
 $EndSCHEMATC

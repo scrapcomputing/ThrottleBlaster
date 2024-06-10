@@ -91,7 +91,7 @@ It is tailored to the needs of vintage PC enthusiasts, so it drives a 4-digit 7-
 You can connect to the Throttle Blaster via the serial port and set the Frequency and PWM Period.
 This is convenient for launching a game with a `.bat` file that first configures the Throttle Blaster and then launches the game.
 
-# Preset Buttons (since rev 0.7 )
+# Preset Buttons (since rev 0.7)
 Since revision 0.7 you can also directly select a preset by pushing one of the 8 available buttons.
 This functionality is compatible with all other modes of operation.
 
@@ -101,7 +101,12 @@ You can simply connect buttons to the Pico's GPIOs, with one button pin to the G
 
  GPIO       | 10 | 11 | 12 | 13 | 18 | 19 | 20  | 21  
 ------------|----|----|----|----|----|----|-----|-----
- Freq (MHz) |  4 |  8 | 10 | 25 | 33 | 66 | 133 | Max 
+ Freq (MHz) |  4 |  8 | 10 | 25 | 33 | 66 | 133 | Max
+
+# Reset Detection (Optional and experimental) (since rev 0.8)
+Connect the computer case reset button to `RES1` and another cable from `RES2` to the computer motherboard.
+Now when you press the reset button, the Throttle Blaster will detect it and will temporarily set the frequency to maximum for a faster boot.
+Durint this time the MHz display will show "boot" and show a count down until the frequency is restored.
 
 ## Reverse Direction jumper JP3 (since rev 0.4)
 Since revision 0.4 the default rotation direction of the knob has been changed and a new jumper JP3 has been added.
@@ -191,13 +196,14 @@ N/A            | 1 (recommended)   | TM1637 based 4-digit 7-segment display     
 D1             | 1                 | Through-hole diode (preferrably Schottky 1N5817)      | Reverse polarity protection
 N/A (for Pico) | 2                 | 1x13 female through-hole pin-header 2.54mm pitch      | For attaching the Pico to the board.
 J1             | 1 (optional)      | 1x01 male through-hole angled pin-header 2.54mm pitch | For the STPCLK# cable
+RES1,2         | 2 (optional)      | 1x02 male through-hole angled pin-header 2.54mm pitch | For Reset detection
 J2             | 1 (optional UART) | 1x03 male through-hole pin-header 2.54mm pitch        | For controlling the Throttle Blaster via serial. (Requires MAX3232)
 JP1/JP2        | 1                 | 2x02 (or 2x 1x02) male through-hole pin-header 2.54mm | Selects mode of operation.
 JP3            | 1                 | 1x02 male through-hole pin-header 2.54mm pitch        | For the JP3 jumper that flips the rotation direction
 SW1/SW2        | 2 (optional)      | 1x02 male through-hole pin-header 2.54mm pitch        | For the SW1 and SW2 switches
 U1             | 1 (optional)      | 1x04 male through-hole angled pin-header 2.54mm pitch | For connecting the TM1637 7-segment display.
 Jumpers        | 2                 | 2.54mm pitch Jumpers                                  | For JP1/JP2
-Q1             | 1                 | 2N7000 N-channel MOSFET                               | Pulls down the CPU's STPCLK# pin
+Q1 (optional Q2) | 1 (2 for optional RESET detection) | 2N7000 N-channel MOSFET                               | Pulls down the CPU's STPCLK# pin
 R1             | 1                 | 1K Resistor SMD 1206                                  | For the throttle transistor gate.
 R2             | 1                 | 100 Ohm Resistor SMD 1206                             | Between the throttle pin and the throttling transistor.
 Pot1           | 1 (mode POT)      | 10K linear potentiometer                              | Selects Frequency in Potentiometer mode.
@@ -251,6 +257,7 @@ So I don't think there is a way to get the Throttle Blaster to work universally 
 
 
 # Change Log
+- Rev 0.8: Adds RESET detction circuit (optional) which will temporarily set the speed to max for 20 seconds.
 - Rev 0.7: Adds support for 8 preset buttons.
 - Rev 0.6: Firmware bug fixes: (i) fix saving MHz/Period adjustments to flash and (ii) one-button mode frequency glitch.
 - Rev 0.5: Replaces potentiometer capacitor with SMD and several firmware fixes.
@@ -258,6 +265,9 @@ So I don't think there is a way to get the Throttle Blaster to work universally 
 - Rev 0.3: Adds UART support in both firmware and PCB.
 - Rev 0.2: Adds two-button mode "2Btn".
 - Rev 0.1: Initial release.
+
+# Acknowledgements
+- Many thanks to Michael Swimm for testing, reporting bugs, coming up with awesome ideas for new features, and for sharing fancy mounting hardware for the Throttle Blaster!
 
 # License
 The project is GPLv2 except for `Pwm.pio` which comes from the Pi Pico SDK examples and is under `SPDX-License-Identifier: BSD-3-Clause`.

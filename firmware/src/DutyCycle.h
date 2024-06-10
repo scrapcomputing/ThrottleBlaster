@@ -33,6 +33,7 @@ public:
   int getKHz() const { return KHz; }
   void setKHz(int NewKHz) { KHz = NewKHz; }
   void setPeriod(int Num) { Period = (1u << 8) * Num - 1; }
+  void setPeriodRaw(int RawPeriod) { Period = RawPeriod; }
   int getPeriod() const { return Period; }
   int getLevel() const {
     return Period - (int64_t)KHz * Period / Presets.getMaxKHz();

@@ -60,6 +60,14 @@ void CommonLogic::updateDisplay() {
   case Mode::ResetToDefaults:
     Disp.printTxt(MsgResetToDefaults);
     break;
+  case Mode::Boot: {
+    auto Now = std::chrono::system_clock::now();
+    auto Seconds =
+        std::chrono::duration_cast<std::chrono::seconds>(Now - *ResetTimeOpt);
+    int Remaining = ResetMaxSpeedDuration - Seconds.count();
+    Disp.printRaw(Remaining);
+    break;
+  }
   }
 #endif
 }
@@ -110,6 +118,43 @@ void CommonLogic::uartTick(Uart &Uart) {
     printTxtAndSleep(MsgUartErr);
   }
   UartStr.clear();
+}
+
+void CommonLogic::resetSenseTick() {
+  if (ResetTimeOpt) {
+    auto Now = std::chrono::system_clock::now();
+    auto Seconds =
+        std::chrono::duration_cast<std::chrono::seconds>(Now - *ResetTimeOpt);
+    if (Seconds.count() > ResetMaxSpeedDuration) {
+      DBG_PRINT(std::cout << "End of Reset. SvKHz=" << ResetSavedKHz
+                          << " SvPeriod=" << ResetSavedPeriod
+                          << " SvMode=" << getModeStr(ResetSavedMode) << "\n";)
+      ResetTimeOpt = std::nullopt;
+      DC.setKHz(ResetSavedKHz);
+      DC.setPeriodRaw(ResetSavedPeriod);
+      printTxtAndSleep(MsgResetDetected);
+      setMode(ResetSavedMode);
+    }
+  }
+  // Button not pressed, skipping.
+  if (ResetSense.get() != ButtonState::Release)
+    return;
+  // Nothing to do if already at max freq.
+  if (DC.getKHz() == Presets.getMaxKHz())
+    return;
+  // If already in booting mode don't save freq/period/mode.
+  if (getMode() != Mode::Boot) {
+    ResetSavedKHz = DC.getKHz();
+    ResetSavedPeriod = DC.getPeriod();
+    ResetSavedMode = getMode();
+  }
+  DBG_PRINT(std::cout << "Reset detected! SvKHz=" << ResetSavedKHz
+                      << " SvPeriod=" << ResetSavedPeriod
+                      << " SvMode=" << getModeStr(ResetSavedMode) << "\n";)
+  DC.setMHzToMax();
+  printTxtAndSleep(MsgResetDetected);
+  ResetTimeOpt = std::chrono::system_clock::now();
+  setMode(Mode::Boot);
 }
 
 void CommonLogic::presetBtnsTick() {

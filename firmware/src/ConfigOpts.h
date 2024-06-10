@@ -21,6 +21,10 @@ static constexpr const int LeftButtonGPIO = RotarySwGPIO;
 static constexpr const int RightButtonGPIO = 7;
 // Buttons for presets
 static std::vector<int> PresetBtnGPIOs = {10, 11, 12, 13, 18, 19, 20, 21};
+// Reset sense
+static constexpr const int ResetSenseGPIO = 22;
+// Maximum speed for this many seconds.
+static constexpr const int ResetMaxSpeedDuration = 20;
 
 // Throttle pin
 static constexpr const int ThrottleGPIO = 27;
