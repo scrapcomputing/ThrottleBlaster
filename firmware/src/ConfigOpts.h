@@ -86,7 +86,7 @@ static constexpr const int ButtonDebounceSz = 2;
 // Push button behavior.
 static constexpr const int ButtonMedReleaseCnt = 20;
 static constexpr const int ButtonLongPressCnt = 200;
-static constexpr const int RotaryLongPressCnt = 200;
+static constexpr const int RotaryLongPressMillis = 1500;
 
 // TM1637 Display Settings
 // Flashing

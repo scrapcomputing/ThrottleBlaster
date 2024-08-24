@@ -6,18 +6,23 @@
 #ifndef __ROTARYENCODER_H__
 #define __ROTARYENCODER_H__
 
+#include "Debug.h"
 #include "Pico.h"
 #include "Utils.h"
+#include <chrono>
+#include <list>
+#include <pico/multicore.h>
 
 class RotaryEncoder {
   int ClkPin;
   int DtPin;
   int SwPin;
 
-  static constexpr const unsigned DebounceSz = 2;
+  static constexpr const unsigned DebounceSz = 4;
+  static constexpr const unsigned SwitchDebounceSz = 16;
   Buffer<bool, DebounceSz, 0> BuffA;
   Buffer<bool, DebounceSz, 0> BuffB;
-  Buffer<bool, DebounceSz, 1> BuffC;
+  Buffer<bool, SwitchDebounceSz, 1> BuffC;
 
 public:
   enum class State {
@@ -28,6 +33,26 @@ public:
     Right,
     None,
   };
+
+#ifdef DBGPRINT
+  static const char *stateToStr(State S) {
+    switch (S) {
+    case State::SwPress:
+      return "SwPress";
+    case State::SwRelease:
+      return "SwRelease";
+    case State::SwLongPress:
+      return "SwLongPress";
+    case State::Left:
+      return "Left";
+    case State::Right:
+      return "Right";
+    case State::None:
+      return "None";
+    }
+    return "UNKNOWN";
+  }
+#endif // DBGPRINT
 
 private:
   bool LastA = false;
@@ -47,82 +72,21 @@ private:
   Pico &PICO;
   bool ReverseDirection;
 
-  int LongPressCnt = 0;
+  std::chrono::time_point<std::chrono::high_resolution_clock> PressStart;
+
+  critical_section Lock;
+
+  std::list<State> StateList;
+
+  void registerState(State);
 
 public:
   RotaryEncoder(int ClkPin, int DtPin, int SwPin, Pico &Pico,
-                bool ReverseDirection = false)
-      : ClkPin(ClkPin), DtPin(DtPin), SwPin(SwPin), PICO(Pico),
-        ReverseDirection(ReverseDirection) {
-    PICO.initGPIO(ClkPin, GPIO_IN, Pico::Pull::Up, "Rotary.Clk");
-    PICO.initGPIO(DtPin, GPIO_IN, Pico::Pull::Up, "Rotary.Dt");
-    PICO.initGPIO(SwPin, GPIO_IN, Pico::Pull::Up, "Rotary.Sw");
-  }
+                bool ReverseDirection = false);
 
-  State get() {
-    PICO.readGPIO();
-    BuffA.append(PICO.getGPIO(ClkPin));
-    BuffB.append(PICO.getGPIO(DtPin));
-    BuffC.append(PICO.getGPIO(SwPin));
-    bool A = BuffA.getMean();
-    bool B = BuffB.getMean();
-    bool Sw = BuffC.getMean();
+  void tick();
 
-    // bool A = PICO.getGPIO(ClkPin);
-    // bool B = PICO.getGPIO(DtPin);
-    // bool Sw = PICO.getGPIO(SwPin);
-
-    auto GetState = [this](bool A, bool B, bool Sw) {
-      if (!Sw && LastSw) {
-        LongPressCnt = 0;
-        return State::SwPress;
-      } else if (Sw && !LastSw) {
-        if (!IgnoreRelease)
-          return State::SwRelease;
-        IgnoreRelease = false;
-      } else if (!Sw && !LastSw) {
-        if (++LongPressCnt == RotaryLongPressCnt) {
-          IgnoreRelease = true;
-          return State::SwLongPress;
-        }
-      } else if (A && !B) {
-        if (IntState.back() != InternalState::A1B0)
-          IntState.append(InternalState::A1B0);
-      } else if (!A && B) {
-        if (IntState.back() != InternalState::A0B1)
-          IntState.append(InternalState::A0B1);
-      } else if (A && B) {
-        if (IntState.back() != InternalState::A1B1)
-          IntState.append(InternalState::A1B1);
-      } else if (!A && !B) {
-        if (IntState.back() != InternalState::A0B0)
-          IntState.append(InternalState::A0B0);
-      }
-      return State::None;
-    };
-
-    auto RetState = GetState(A, B, Sw);
-
-    LastA = A;
-    LastB = B;
-    LastSw = Sw;
-
-    if (IntState[0] == InternalState::A0B1 &&
-        IntState[1] == InternalState::A0B0 &&
-        IntState[2] == InternalState::A1B0 &&
-        IntState[3] == InternalState::A1B1) {
-      IntState.clear();
-      return ReverseDirection ? State::Right : State::Left;
-    }
-    if (IntState[0] == InternalState::A1B0 &&
-        IntState[1] == InternalState::A0B0 &&
-        IntState[2] == InternalState::A0B1 &&
-        IntState[3] == InternalState::A1B1) {
-      IntState.clear();
-      return ReverseDirection ? State::Left : State::Right;
-    }
-    return RetState;
-  }
+  State get();
 };
 
 #endif // __ROTARYENCODER_H__
