@@ -201,7 +201,7 @@ Reference      | Quantity          | Value                                      
 ---------------|-------------------|-------------------------------------------------------|------------
 N/A            | 1 (recommended)   | TM1637 based 4-digit 7-segment display                | The display of the Throttle Blaster
 D1             | 1                 | Through-hole diode (preferrably Schottky 1N5817)      | Reverse polarity protection
-N/A (for Pico) | 2                 | 1x13 female through-hole pin-header 2.54mm pitch      | For attaching the Pico to the board.
+N/A (for Pico) | 2                 | 1x17 female through-hole pin-header 2.54mm pitch (Harwin M20-7821746) | For attaching the Pico to the board.
 J1             | 1 (optional)      | 1x01 male through-hole angled pin-header 2.54mm pitch | For the STPCLK# cable
 RES1,2         | 2 (optional)      | 1x02 male through-hole angled pin-header 2.54mm pitch | For Reset detection
 J2             | 1 (optional UART) | 1x03 male through-hole pin-header 2.54mm pitch        | For controlling the Throttle Blaster via serial. (Requires MAX3232)
