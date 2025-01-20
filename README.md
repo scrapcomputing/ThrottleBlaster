@@ -264,7 +264,8 @@ So I don't think there is a way to get the Throttle Blaster to work universally 
 
 
 # Change Log
-- Rev 0.8b: Improves responsiveness of rotary encoder.
+- Rev 0.8c: Fixes bugs introduced in Rev 0.8b.
+- Rev 0.8b: Improves responsiveness of rotary encoder. WARNING: This revision is buggy, please upgrade to Rev 0.8c (thanks @nahimov for reporting the bug).
 - Rev 0.8: Adds RESET detction circuit (optional) which will temporarily set the speed to max for 20 seconds.
 - Rev 0.7: Adds support for 8 preset buttons.
 - Rev 0.6: Firmware bug fixes: (i) fix saving MHz/Period adjustments to flash and (ii) one-button mode frequency glitch.

@@ -42,8 +42,8 @@ void FlashStorage::write(const std::vector<int> &Values) {
     DBG_PRINT(std::cout << Val << "\n";)
 
   DBG_PRINT(std::cout << "Before save and disable interrupts()\n";)
-  // // When writing to flash we need to stop the other core from running code.
-  // multicore_lockout_start_blocking();
+  // When writing to flash we need to stop the other core from running code.
+  multicore_lockout_start_blocking();
   // We also need to disable interrupts.
   uint32_t SvInterrupts = save_and_disable_interrupts();
   flash_range_erase(BaseOffset, BytesToFlash);
@@ -51,8 +51,8 @@ void FlashStorage::write(const std::vector<int> &Values) {
                       BytesToFlash);
   // Restore interrupts.
   restore_interrupts(SvInterrupts);
-  // // Resume execution on other core.
-  // multicore_lockout_end_blocking();
+  // Resume execution on other core.
+  multicore_lockout_end_blocking();
   DBG_PRINT(std::cout << "After interrupts\n";)
 }
 
