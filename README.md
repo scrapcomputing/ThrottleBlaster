@@ -212,7 +212,7 @@ U1             | 1 (optional)      | 1x04 male through-hole angled pin-header 2.
 Jumpers        | 2                 | 2.54mm pitch Jumpers                                  | For JP1/JP2
 Q1 (optional Q2) | 1 (2 for optional RESET detection) | 2N7000 N-channel MOSFET                               | Pulls down the CPU's STPCLK# pin
 R1             | 1                 | 1K Resistor SMD 1206                                  | For the throttle transistor gate.
-R2             | 1                 | 100 Ohm Resistor SMD 1206                             | Between the throttle pin and the throttling transistor.
+R2             | 1                 | 100 Ohm Resistor SMD 1206 (P-iii CPUs may need 47 Ohms) | Between the throttle pin and the throttling transistor for additional safety. It's value could be lower.
 Pot1           | 1 (mode POT)      | 10K linear potentiometer                              | Selects Frequency in Potentiometer mode.
 SW1            | 1 (mode 1Btn)     | Push button                                           | Selects Frequency in 1Btn mode.
 SW3            | 1 (mode 2Btn)     | Push button                                           | The right button in 2Btn mode.
@@ -224,13 +224,19 @@ C1             | 1 (mode POT)      | 100pF Ceramic capacitor SMD 1205           
 C2,C3,C4,C5,C6 | 5 (optional UART) | 1uF Ceramic Capacitor SMD 1206                        | For MAX3232 (serial port)
 U4             | 1 (optional UART) | MAX3232 SOIC-16 5.3x10.2mm (Commonly listed as 16-SOIC 3.90mm width) | For controlling the Throttle Blaster via the serial port.
 
-
-
 ## Using the circuit for the first time
 - Select the operation mode using jumpers JP1/JP2.
 - Connect J1 to your CPU's STPCLK# pin.
 - Power it on and you are good to go.
 - You can reverse the knob direction by closing JP3 (since rev.0.4)
+
+
+## Basic Troubleshooting
+- Check that the Throttle Blaster's ground is connected to the motherboard's ground
+- Check the voltage at the STPCLK# pin:
+  - Max frequency: The voltage should be matching the CPU's I/O high ~3.3V for most CPUs
+  - Any other frequency: You should be seing pulses using an oscilloscope, or values between 0 and ~3.3V using a multimeter.
+- Confirm that it's working as expected by running benchmarks from [Phil's DOS Benchmark Pack](https://www.philscomputerlab.com/dos-benchmark-pack.html)
 
 
 ## How to find the `STPCLK#` pin
