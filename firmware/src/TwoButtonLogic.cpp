@@ -44,6 +44,8 @@ void TwoButtonLogic::cyclePresets(ButtonState LBtnState,
   case ButtonState::LongPress:
     LongPress();
     break;
+  default:
+    break;
   }
   switch (RBtnState) {
   case ButtonState::Release:
@@ -54,6 +56,8 @@ void TwoButtonLogic::cyclePresets(ButtonState LBtnState,
     break;
   case ButtonState::LongPress:
     LongPress();
+    break;
+  default:
     break;
   }
 }
@@ -71,6 +75,8 @@ void TwoButtonLogic::manual(ButtonState LBtnState, ButtonState RBtnState) {
     break;
   case ButtonState::LongPress:
     break;
+  default:
+    break;
   }
 
   switch (RBtnState) {
@@ -79,6 +85,8 @@ void TwoButtonLogic::manual(ButtonState LBtnState, ButtonState RBtnState) {
     DC.incrMHz();
     break;
   case ButtonState::LongPress:
+    break;
+  default:
     break;
   }
 }
@@ -116,6 +124,8 @@ void TwoButtonLogic::configPeriod(ButtonState LBtnState, ButtonState RBtnState) 
   case ButtonState::LongPress:
     LongPress();
     return;
+  default:
+    break;
   }
 
   switch (RBtnState) {
@@ -128,6 +138,8 @@ void TwoButtonLogic::configPeriod(ButtonState LBtnState, ButtonState RBtnState) 
   case ButtonState::LongPress:
     LongPress();
     return;
+  default:
+    break;
   }
 }
 
@@ -144,10 +156,14 @@ void TwoButtonLogic::configResetToDefaults(ButtonState LBtnState,
   case ButtonState::Release:
     DontReset();
     break;
+  default:
+    break;
   }
   switch (RBtnState) {
   case ButtonState::Release:
     DontReset();
+    break;
+  default:
     break;
   }
   if (bothLongPress(LBtnState, RBtnState)) {
@@ -183,6 +199,8 @@ void TwoButtonLogic::configMaxMHz(ButtonState LBtnState, ButtonState RBtnState) 
   case ButtonState::LongPress:
     LongPress();
     return;
+  default:
+    break;
   }
 
   switch (RBtnState) {
@@ -196,6 +214,8 @@ void TwoButtonLogic::configMaxMHz(ButtonState LBtnState, ButtonState RBtnState) 
   case ButtonState::LongPress:
     LongPress();
     return;
+  default:
+    break;
   }
 }
 
@@ -222,6 +242,8 @@ void TwoButtonLogic::configMHz(ButtonState LBtnState, ButtonState RBtnState) {
   case ButtonState::LongPress:
     LongPress();
     return;
+  default:
+    break;
   }
 
   switch (RBtnState) {
@@ -232,6 +254,8 @@ void TwoButtonLogic::configMHz(ButtonState LBtnState, ButtonState RBtnState) {
   case ButtonState::LongPress:
     LongPress();
     return;
+  default:
+    break;
   }
 }
 
@@ -266,6 +290,8 @@ void TwoButtonLogic::tick() {
     break;
   case Mode::Uart:
     uart(LBtnState, RBtnState);
+    break;
+  case Mode::Boot:
     break;
   }
   LastMode = getMode();

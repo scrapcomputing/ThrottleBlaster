@@ -49,6 +49,8 @@ void RotaryLogic::onSwRelease() {
     setMode(Mode::Presets);
     printTxtAndSleep(MsgPresets);
     break;
+  case Mode::Boot:
+    break;
   }
 }
 
@@ -90,6 +92,8 @@ void RotaryLogic::onSwLongPress() {
   case Mode::Uart:
     setMode(Mode::Presets);
     printTxtAndSleep(MsgPresets);
+    break;
+  case Mode::Boot:
     break;
   }
 }
@@ -134,6 +138,8 @@ void RotaryLogic::onLeft() {
     DC.setKHz(Presets.getActualKHz());
     DC.setPeriod(Presets.getPeriod());
     printTxtAndSleep(MsgPresets);
+    break;
+  case Mode::Boot:
     break;
   }
 }
@@ -181,6 +187,8 @@ void RotaryLogic::onRight() {
     DC.setPeriod(Presets.getPeriod());
     printTxtAndSleep(MsgPresets);
     break;
+  case Mode::Boot:
+    break;
   }
   }
 }
@@ -213,5 +221,7 @@ void RotaryLogic::tick() {
     onRight();
     break;
   }
+  default:
+    break;
   }
 }

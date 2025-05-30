@@ -45,8 +45,9 @@ public:
   TwoButtonLogic(int LeftButtonGPIO, int RightButtonGPIO, int SamplePeriod,
                  Pico &Pi, Display &Disp, DutyCycle &DC, PresetsTable &Presets,
                  FlashStorage &Flash)
-      : LBtn(LeftButtonGPIO, Pi, "LBtn"), RBtn(RightButtonGPIO, Pi, "LBtn"),
-        Pi(Pi), CommonLogic(SamplePeriod, Disp, DC, Presets, Flash, Pi) {
+      : CommonLogic(SamplePeriod, Disp, DC, Presets, Flash, Pi),
+        LBtn(LeftButtonGPIO, Pi, "LBtn"), RBtn(RightButtonGPIO, Pi, "LBtn"),
+        Pi(Pi) {
     setMode(Mode::Presets);
   }
   void tick() final;

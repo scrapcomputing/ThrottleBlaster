@@ -12,11 +12,6 @@
 
 #define DUMP_METHOD __attribute__((noinline)) __attribute__((__used__))
 
-static void sleep_ns(uint32_t ns) {
-  for (int i = 0, e = ns / 8; i != e; ++i)
-    asm volatile("nop\n"); /* 8ns each 1 cycle @125MHz */
-}
-
 static inline void sleep_nops(int nops) {
   for (int i = 0; i != nops; ++i)
     asm volatile("nop:"); /* 8ns each 1 cycle @125MHz */

@@ -70,7 +70,6 @@ std::vector<int> FlashStorage::readMagicNumber() const {
 }
 
 std::pair<int, int> FlashStorage::readRevision() const {
-  int MagicNumberSz = (int)MagicNumber.size();
   return {FlashArray[-2], FlashArray[-1]};
 }
 

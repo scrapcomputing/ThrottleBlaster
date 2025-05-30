@@ -128,14 +128,14 @@ void PresetsTable::readFromFlash(FlashStorage &Flash) {
   }
   updateMaxMHz(FlashMaxMHz);
   // 2. Next read the size of Table.
-  int TableSz = Flash.read(FlashOffset++);
+  unsigned TableSz = Flash.read(FlashOffset++);
   if (TableSz > ImmutableTable.size() + 1) {
     DBG_PRINT(std::cout << "Bad TableSz=" << TableSz << "\n";)
     return;
   }
   // 3. Next read the entries one by one.
   std::vector<Entry> FlashTable;
-  for (int EntryIdx = 0; EntryIdx != TableSz; ++EntryIdx)
+  for (unsigned EntryIdx = 0; EntryIdx != TableSz; ++EntryIdx)
     FlashTable.emplace_back(Flash, FlashOffset);
   // 4. Check checksum.
   int ReadChecksum = Flash.read(FlashOffset++);

@@ -114,8 +114,6 @@ public:
 // Core 0 is handling the UI.
 static void core0_main_loop(Pico &Pico, Display &Disp, FlashStorage &Flash,
                             DutyCycle &DC, Uart &Uart) {
-  int LoopCntSinceRotary = 0;
-
   std::unique_ptr<CommonLogic> UI;
   auto Mode = getUIMode(Pico);
   DBG_PRINT(std::cout << "Mode=" << getUIModeStr(Mode) << "\n";)

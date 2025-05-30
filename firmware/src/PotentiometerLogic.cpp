@@ -31,6 +31,8 @@ void PotentiometerLogic::manual(int PotVal, ButtonState BtnState) {
     savePotVal(PotVal);
     Disp.setFlash(true);
     return;
+  default:
+    break;
   }
   if (EnablePot) {
     int MaxKHz = Presets.getMaxKHz();
@@ -65,6 +67,8 @@ void PotentiometerLogic::cyclePresets(int PotVal, ButtonState BtnState) {
     savePotVal(PotVal);
     Disp.setFlash(true);
     break;
+  default:
+    break;
   }
 }
 
@@ -87,6 +91,8 @@ void PotentiometerLogic::configPeriod(int PotVal, ButtonState BtnState) {
     savePotVal(PotVal);
     setMode(Mode::Presets);
     return;
+  default:
+    break;
   }
 
   // If we moved the potentiometer enough, use it to control the value.
@@ -99,6 +105,8 @@ void PotentiometerLogic::configPeriod(int PotVal, ButtonState BtnState) {
     case PotDir::Left:
       Presets.decrPeriod();
       DC.setPeriod(Presets.getPeriod());
+      break;
+    default:
       break;
     }
   }
@@ -126,6 +134,8 @@ void PotentiometerLogic::configResetToDefaults(int PotVal,
     savePotVal(PotVal);
     setMode(Mode::Presets);
     break;
+  default:
+    break;
   }
   if (EnablePot && movedPotComparedToSaved(PotVal))
     DontReset();
@@ -149,6 +159,8 @@ void PotentiometerLogic::configMaxMHz(int PotVal, ButtonState BtnState) {
     DC.setKHz(Presets.getMaxKHz());
     return;
   }
+  default:
+    break;
   }
   // If we moved the potentiometer enough, use it to control the value.
   if (EnablePot && movedPotComparedToSaved(PotVal)) {
@@ -158,6 +170,8 @@ void PotentiometerLogic::configMaxMHz(int PotVal, ButtonState BtnState) {
       break;
     case PotDir::Left:
       Presets.decrMaxMHz();
+      break;
+    default:
       break;
     }
   }
@@ -178,6 +192,8 @@ void PotentiometerLogic::configMHz(int PotVal, ButtonState BtnState) {
     Disp.setFlash(true);
     setMode(Mode::ConfigPeriod);
     return;
+  default:
+    break;
   }
   // If we moved the potentiometer enough, use it to control the value.
   if (EnablePot && movedPotComparedToSaved(PotVal)) {
@@ -187,6 +203,8 @@ void PotentiometerLogic::configMHz(int PotVal, ButtonState BtnState) {
       break;
     case PotDir::Left:
       Presets.decrActualKHz();
+      break;
+    default:
       break;
     }
   }
@@ -239,6 +257,8 @@ void PotentiometerLogic::tick() {
     break;
   case Mode::Uart:
     uart(PotVal, BtnState);
+    break;
+  case Mode::Boot:
     break;
   }
   LastMode = getMode();
