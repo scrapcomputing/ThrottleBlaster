@@ -246,17 +246,21 @@ This table lists the STPCLK# pin number for your reference:
   CPU                 | STPCLK# Pin
 ----------------------|------------
  Pentium MMX          | V34
+ Pentium Pro          | A3
  Pentium-iii socket   | AG35
  Pentium-iii slot1    | B6
  Athlon XP            | AC1
 
 <img src='img/stpclk_pin_socket7.jpg' height=200 width=auto>
 
+<img src='img/stpclk_pin_socket8.jpg' height=200 width=auto>
+
 <img src='img/stpclk_pin_slot1.jpg' height=200 width=auto>
 
 <img src='img/stpclk_pin_socket370.jpg' height=200 width=auto>
 
 <img src='img/stpclk_pin_socketA.jpg' height=200 width=auto>
+
 
 # How about older CPUs that don't have a STPCLK pin?
 486 or older CPUs don't usually have a STPCLK# pin.
