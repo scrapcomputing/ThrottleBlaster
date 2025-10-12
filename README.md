@@ -212,7 +212,7 @@ U1             | 1 (optional)      | 1x04 male through-hole angled pin-header 2.
 Jumpers        | 2                 | 2.54mm pitch Jumpers                                  | For JP1/JP2
 Q1 (optional Q2) | 1 (2 for optional RESET detection) | 2N7000 N-channel MOSFET                               | Pulls down the CPU's STPCLK# pin
 R1             | 1                 | 1K Resistor SMD 1206                                  | For the throttle transistor gate.
-R2             | 1                 | 100 Ohm Resistor SMD 1206 (P-iii CPUs may need 47 Ohms) | Between the throttle pin and the throttling transistor for additional safety. It's value could be lower.
+R2             | 1                 | 100 Ohm Resistor SMD 1206 WARNING: P-iii CPUs and VIA MVP3-based boards may need lower values like 47 Ohms | Between the throttle pin and the throttling transistor for additional safety. It's value could be lower.
 Pot1           | 1 (mode POT)      | 10K linear potentiometer                              | Selects Frequency in Potentiometer mode.
 SW1            | 1 (mode 1Btn)     | Push button                                           | Selects Frequency in 1Btn mode.
 SW3            | 1 (mode 2Btn)     | Push button                                           | The right button in 2Btn mode.
