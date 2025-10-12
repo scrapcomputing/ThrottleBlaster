@@ -44,12 +44,14 @@ Display::Display(int CLK_PIN, int DIO_PIN) {
 }
 
 
+#ifdef PICO_TM1637
 static int pow10(int Num) {
   int Res = 1;
   for (int Cnt = 0; Cnt < Num; ++Cnt)
     Res = Res * 10;
   return Res;
 }
+#endif // PICO_TM1637
 
 void Display::printRaw(int Num) {
 #ifdef PICO_TM1637

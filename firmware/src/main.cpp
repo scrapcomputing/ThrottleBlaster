@@ -15,7 +15,6 @@
 #include "TwoButtonLogic.h"
 #include "Uart.h"
 #include "hardware/pio.h"
-#include <bsp/board.h>
 #include <chrono>
 #include <config.h>
 #include <hardware/watchdog.h>

@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.13)
 
 # Build
 # -----
-# $ mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Release -DPICO_SDK_PATH=/path/to/pico-sdk/ ../src/ && make -j
+# $ mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Release -DPICO_SDK_PATH=/path/to/pico-sdk/ -DPICO_BOARD=<pico|pico2> ../src/ && make -j
 # For 7-segment display support you need to specify the path to the
 # Pico-TM1637 library (https://github.com/wahlencraft/TM1637-pico)
 # -DPICO_TM1637_PATH=/path/to/TM1637-pico/
@@ -27,7 +27,17 @@ message("PICO_SDK_PATH = ${PICO_SDK_PATH}")
 # note: this must happen before project()
 include(pico_sdk_import.cmake)
 
-set(PROJECT_NAME ThrottleBlaster)
+if (PICO_BOARD STREQUAL "pico")
+  set(NAME_SUFFIX pico1)
+  set(PICO1 1)
+elseif (PICO_BOARD STREQUAL "pico2")
+  set(PICO2 1)
+  set(NAME_SUFFIX pico2)
+else ()
+  message(FATAL ERROR "ERROR: Please define -DPICO_BOARD pico1 or pico2")
+endif ()
+
+set(PROJECT_NAME "ThrottleBlaster_${NAME_SUFFIX}")
 project(
   ${PROJECT_NAME}
   LANGUAGES C CXX ASM)

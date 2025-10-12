@@ -156,13 +156,14 @@ Closing the jumper will reverse the direction for both the rotary encoder and th
 # Firmware
 
 ## Dependencies
-- (Optional) https://github.com/wahlencraft/TM1637-pico
-- C++17 compiler
+- C++17 cross compiler for pico (see [README](https://github.com/raspberrypi/pico-sdk))
+- [pico-sdk](https://github.com/raspberrypi/pico-sdk) 2.2 or later
+- (Optional) [TM1637 display library](https://github.com/wahlencraft/TM1637-pico) 1.2.1
 
 ## Build Instructions
 - Download release (v1.2.1) https://github.com/wahlencraft/TM1637-pico and extract it.
 - `cd firmware/ && mkdir build && cd build`
-- `cmake -DCMAKE_BUILD_TYPE=Release -DPICO_SDK_PATH=/path/to/pico-sdk/ -DPICO_TM1637_PATH=/path/to/TM1637-pico/ ../src/ && make`
+- `cmake -DCMAKE_BUILD_TYPE=Release -DPICO_SDK_PATH=/path/to/pico-sdk/ -DPICO_BOARD=<pico|pico2> -DPICO_TM1637_PATH=/path/to/TM1637-pico/ ../src/ && make`
 - This will place the firmware into: `ThrottleBlaster.uf2` in the `build` directory.
 
 ## Installing the firmware
@@ -274,6 +275,8 @@ So I don't think there is a way to get the Throttle Blaster to work universally 
 
 
 # Change Log
+- Rev 0.8e: Fixes single/two-button configuration bug (introduced in 0.8b). Adds Pico2 support.
+- Rev 0.8d: Fixes reset detection
 - Rev 0.8c: Fixes bugs introduced in Rev 0.8b.
 - Rev 0.8b: Improves responsiveness of rotary encoder. WARNING: This revision is buggy, please upgrade to Rev 0.8c (thanks @nahimov for reporting the bug).
 - Rev 0.8: Adds RESET detction circuit (optional) which will temporarily set the speed to max for 20 seconds.
