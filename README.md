@@ -1,8 +1,10 @@
 # ThrottleBlaster
 
-A Pi Pico-based solution that reduces the effective frequency of fast CPUs by pulling down the STPCLK# pin at a specified frequency and duty-cycle.
+A Pi Pico-based Turbo circuit with a MHz display that reduces the effective frequency of fast CPUs by pulling down the STPCLK# pin at a specified frequency and duty-cycle.
 
 This allows you to play speed-sensitive games, like Digger on a 1200MHz Athlon!
+
+Since rev.0.8e we also support the Pico 2!
 
 <img src='img/ThrottleBlaster_pcb.jpg' height=200 width=auto>
 
@@ -16,7 +18,7 @@ Videos:
 - Mounted on a 5.25 panel: https://www.youtube.com/shorts/n1aFvRNtOcw (by Michael Swimm)
 - Controllable by serial: https://www.youtube.com/watch?v=71rln-R2mis (by Michael Swimm)
 
-Download firmware (ThrottleBlaster.uf2): https://github.com/scrapcomputing/ThrottleBlaster/releases
+Download firmware ThrottleBlaster_pico1.uf2 (or ThrottleBlaster_pico2.uf2 for the Pico 2): https://github.com/scrapcomputing/ThrottleBlaster/releases
 
 Download gerbers (ThrottleBlaster_gerbers_rev.X.X.zip): https://github.com/scrapcomputing/ThrottleBlaster/releases
 
@@ -164,14 +166,14 @@ Closing the jumper will reverse the direction for both the rotary encoder and th
 - Download release (v1.2.1) https://github.com/wahlencraft/TM1637-pico and extract it.
 - `cd firmware/ && mkdir build && cd build`
 - `cmake -DCMAKE_BUILD_TYPE=Release -DPICO_SDK_PATH=/path/to/pico-sdk/ -DPICO_BOARD=<pico|pico2> -DPICO_TM1637_PATH=/path/to/TM1637-pico/ ../src/ && make`
-- This will place the firmware into: `ThrottleBlaster.uf2` in the `build` directory.
+- This will place the firmware into: `ThrottleBlaster_pico1.uf2` (or `ThrottleBlaster_pico2.uf2`) in the `build` directory.
 
 ## Installing the firmware
 - Unplug the Pico
 - Press and hold the small "BOOTSEL" button on the Pico
 - While holding the BOOTSEL button, connect the Pico to your PC with a micro-USB cable
 - The Pico should show up as a mass-storage device
-- Copy the `ThrottleBlaster.uf2` firmware to the drive associated with the Pico
+- Copy the `ThrottleBlaster_pico1.uf2` (or `ThrottleBlaster_pico2.uf2` for the Pico 2) firmware to the drive associated with the Pico
 - Safely eject the mass-storage device
 
 The Pico should boot and you should see the Pico's LED light up.
