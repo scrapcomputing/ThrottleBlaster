@@ -35,6 +35,8 @@ class TwoButtonLogic : public CommonLogic {
 
   void configPeriod(ButtonState LBtnState, ButtonState RBtnState);
 
+  void configDeletePreset(ButtonState LBtnState, ButtonState RBtnState);
+
   void configResetToDefaults(ButtonState LBtnState, ButtonState RBtnState);
 
   void configMaxMHz(ButtonState LBtnState, ButtonState RBtnState);

@@ -24,8 +24,10 @@ void TwoButtonLogic::cyclePresets(ButtonState LBtnState,
     return;
   }
   if (bothLongPress(LBtnState, RBtnState)) {
-    setMode(Mode::ResetToDefaults);
-    printTxtAndSleep(MsgResetToDefaults);
+    if (Presets.atMaxKHz()) {
+      setMode(Mode::ResetToDefaults);
+      printTxtAndSleep(MsgResetToDefaults);
+    }
     return;
   }
   // Skip if both buttons are pressed.
@@ -101,10 +103,8 @@ void TwoButtonLogic::uart(ButtonState LBtnState, ButtonState RBtnState) {
 void TwoButtonLogic::configPeriod(ButtonState LBtnState, ButtonState RBtnState) {
   auto LongPress = [this]() {
     // Save
-    tryWritePresetsToFlash();
-    Disp.setFlash(false);
-    printTxtAndSleep(MsgConfirm);
-    setMode(Mode::Presets);
+    setMode(Mode::DeletePreset);
+    printTxtAndSleep(MsgDeletePreset);
   };
 
   if (bothRelease(LBtnState, RBtnState)) {
@@ -134,6 +134,51 @@ void TwoButtonLogic::configPeriod(ButtonState LBtnState, ButtonState RBtnState) 
     Presets.incrPeriod();
     DC.setPeriod(Presets.getPeriod());
     DBG_PRINT(std::cout << "Period=" << Presets.getPeriod() << "\n";)
+    return;
+  case ButtonState::LongPress:
+    LongPress();
+    return;
+  default:
+    break;
+  }
+}
+
+void TwoButtonLogic::configDeletePreset(ButtonState LBtnState, ButtonState RBtnState) {
+  auto LongPress = [this]() {
+    // Save
+    tryWritePresetsToFlash();
+    Disp.setFlash(false);
+    printTxtAndSleep(MsgConfirm);
+    setMode(Mode::Presets);
+    if (Presets.isDeleted())
+      Presets.next();
+  };
+
+  if (bothRelease(LBtnState, RBtnState)) {
+    // Cancel
+    setMode(Mode::Presets);
+    printTxtAndSleep(MsgEscape);
+    Disp.setFlash(false);
+    return;
+  }
+  switch (LBtnState) {
+  case ButtonState::Release:
+  case ButtonState::MedRelease:
+    Presets.toggleDeleted();
+    DBG_PRINT(std::cout << "Deleted=" << Presets.isDeleted() << "\n";)
+    return;
+  case ButtonState::LongPress:
+    LongPress();
+    return;
+  default:
+    break;
+  }
+
+  switch (RBtnState) {
+  case ButtonState::Release:
+  case ButtonState::MedRelease:
+    Presets.toggleDeleted();
+    DBG_PRINT(std::cout << "Deleted=" << Presets.isDeleted() << "\n";)
     return;
   case ButtonState::LongPress:
     LongPress();
@@ -281,6 +326,9 @@ void TwoButtonLogic::tick() {
     break;
   case Mode::ConfigPeriod:
     configPeriod(LBtnState, RBtnState);
+    break;
+  case Mode::DeletePreset:
+    configDeletePreset(LBtnState, RBtnState);
     break;
   case Mode::ConfigMaxMHz:
     configMaxMHz(LBtnState, RBtnState);

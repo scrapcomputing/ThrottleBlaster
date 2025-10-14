@@ -9,6 +9,7 @@ void CommonLogic::setMode(Mode NewMode) {
   BeforeMaxMHz = Presets.getMaxMHz();
   BeforePeriod = Presets.getPeriod();
   BeforeActualKHz = Presets.getActualKHz();
+  BeforeDeleted = Presets.isDeleted();
 
   CurrMode = NewMode;
   DBG_PRINT(std::cout << getModeStr(CurrMode) << "\n";)
@@ -17,7 +18,8 @@ void CommonLogic::setMode(Mode NewMode) {
 void CommonLogic::tryWritePresetsToFlash() {
   if (Presets.getActualKHz() != BeforeActualKHz ||
       Presets.getPeriod() != BeforePeriod ||
-      Presets.getMaxMHz() != BeforeMaxMHz) {
+      Presets.getMaxMHz() != BeforeMaxMHz ||
+      Presets.isDeleted() != BeforeDeleted) {
     DBG_PRINT(std::cout << "WriteToFlash:\n";)
     DBG_PRINT(std::cout << "           Before After\n";)
     DBG_PRINT(std::cout << "ActualKHz: " << BeforeActualKHz << " "
@@ -26,6 +28,8 @@ void CommonLogic::tryWritePresetsToFlash() {
                         << Presets.getPeriod() << "\n";)
     DBG_PRINT(std::cout << "MaxMHz:    " << BeforeMaxMHz << " "
                         << Presets.getMaxMHz() << "\n";)
+    DBG_PRINT(std::cout << "Deleted:    " << BeforeDeleted << " "
+                        << Presets.isDeleted() << "\n";)
     Presets.writeToFlash(Flash);
   } else {
     DBG_PRINT(
@@ -49,6 +53,9 @@ void CommonLogic::updateDisplay() {
     break;
   case Mode::ConfigPeriod:
     Disp.printRaw(Presets.getPeriod());
+    break;
+  case Mode::DeletePreset:
+    Disp.printTxt(Presets.isDeleted() ? MsgYes : MsgNo);
     break;
   case Mode::Manual:
   case Mode::Uart:

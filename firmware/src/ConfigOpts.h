@@ -99,4 +99,10 @@ static constexpr const int PrintSleep = 1000;
 // No need to update the PWM period on every UI tick. Skip this many.
 static constexpr const int UpdatePWMSamplePeriod = 8;
 
+// Factory defaults press button.
+static constexpr const int ResetBtnPressMs = 2000;
+static constexpr const int ResetBtnCheckMs = 50;
+static constexpr const int ResetDefaultsFlashOnMs = 100;
+static constexpr const uint32_t ResetDefaultFlashCnt = 20;
+
 #endif // __CONFIGOPTS_H__

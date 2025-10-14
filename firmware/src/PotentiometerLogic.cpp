@@ -85,11 +85,11 @@ void PotentiometerLogic::configPeriod(int PotVal, ButtonState BtnState) {
     DBG_PRINT(std::cout << "Period=" << Presets.getPeriod() << "\n";)
     return;
   case ButtonState::LongPress:
-    tryWritePresetsToFlash();
     Disp.setFlash(false);
-    printTxtAndSleep(MsgConfirm);
+    printTxtAndSleep(MsgDeletePreset);
     savePotVal(PotVal);
-    setMode(Mode::Presets);
+    setMode(Mode::DeletePreset);
+    Disp.setFlash(true);
     return;
   default:
     break;
@@ -105,6 +105,39 @@ void PotentiometerLogic::configPeriod(int PotVal, ButtonState BtnState) {
     case PotDir::Left:
       Presets.decrPeriod();
       DC.setPeriod(Presets.getPeriod());
+      break;
+    default:
+      break;
+    }
+  }
+}
+
+void PotentiometerLogic::configDeletePreset(int PotVal, ButtonState BtnState) {
+  switch (BtnState) {
+  case ButtonState::Release:
+  case ButtonState::MedRelease:
+    Presets.toggleDeleted();
+    DBG_PRINT(std::cout << "Deleted=" << Presets.isDeleted() << "\n";)
+    return;
+  case ButtonState::LongPress:
+    tryWritePresetsToFlash();
+    Disp.setFlash(false);
+    printTxtAndSleep(MsgConfirm);
+    savePotVal(PotVal);
+    setMode(Mode::Presets);
+    if (Presets.isDeleted())
+      Presets.prev();
+    return;
+  default:
+    break;
+  }
+
+  // If we moved the potentiometer enough, use it to control the value.
+  if (EnablePot && movedPotComparedToSaved(PotVal)) {
+    switch (getPotDir(PotVal)) {
+    case PotDir::Right:
+    case PotDir::Left:
+      Presets.toggleDeleted();
       break;
     default:
       break;
@@ -248,6 +281,9 @@ void PotentiometerLogic::tick() {
     break;
   case Mode::ConfigPeriod:
     configPeriod(PotVal, BtnState);
+    break;
+  case Mode::DeletePreset:
+    configDeletePreset(PotVal, BtnState);
     break;
   case Mode::ConfigMaxMHz:
     configMaxMHz(PotVal, BtnState);

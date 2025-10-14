@@ -24,17 +24,24 @@ void RotaryLogic::onSwRelease() {
     printTxtAndSleep(MsgPresets);
     break;
   case Mode::ConfigMHz:
-    tryWritePresetsToFlash();
     setMode(Mode::ConfigPeriod);
     Disp.setFlash(false);
     printTxtAndSleep(MsgPeriod);
     Disp.setFlash(true);
     break;
   case Mode::ConfigPeriod:
+    setMode(Mode::DeletePreset);
+    Disp.setFlash(false);
+    printTxtAndSleep(MsgDeletePreset);
+    Disp.setFlash(true);
+    break;
+  case Mode::DeletePreset:
     tryWritePresetsToFlash();
     setMode(Mode::Presets);
     Disp.setFlash(false);
     printTxtAndSleep(MsgConfirm);
+    if (Presets.isDeleted())
+      Presets.next();
     break;
   case Mode::ConfigMaxMHz:
     tryWritePresetsToFlash();
@@ -74,6 +81,7 @@ void RotaryLogic::onSwLongPress() {
     break;
   case Mode::ConfigMHz:
   case Mode::ConfigPeriod:
+  case Mode::DeletePreset:
     setMode(Mode::Presets);
     printTxtAndSleep(MsgEscape);
     Disp.setFlash(false);
@@ -116,6 +124,10 @@ void RotaryLogic::onLeft() {
     Presets.decrPeriod();
     DC.setPeriod(Presets.getPeriod());
     DBG_PRINT(std::cout << "Period=" << Presets.getPeriod() << "\n";)
+    break;
+  case Mode::DeletePreset:
+    Presets.toggleDeleted();
+    DBG_PRINT(std::cout << "DeletePreset=" << Presets.isDeleted() << "\n";)
     break;
   case Mode::Manual:
     DC.decrMHz();
@@ -162,6 +174,10 @@ void RotaryLogic::onRight() {
     Presets.incrPeriod();
     DC.setPeriod(Presets.getPeriod());
     DBG_PRINT(std::cout << "Period=" << Presets.getPeriod() << "\n";)
+    break;
+  case Mode::DeletePreset:
+    Presets.toggleDeleted();
+    DBG_PRINT(std::cout << "DeletePreset=" << Presets.isDeleted() << "\n";)
     break;
   case Mode::Manual:
     DC.incrMHz();

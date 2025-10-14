@@ -43,6 +43,8 @@ class PotentiometerLogic : public CommonLogic {
 
   void configPeriod(int PotVal, ButtonState BtnState);
 
+  void configDeletePreset(int PotVal, ButtonState BtnState);
+
   void configResetToDefaults(int PotVal, ButtonState BtnState);
 
   void configMaxMHz(int PotVal, ButtonState BtnState);
@@ -86,9 +88,12 @@ public:
       : CommonLogic(SamplePeriod, Disp, DC, Presets, Flash, Pi),
         Btn(ButtonGPIO, Pi, "Pot.Btn"), Pot(PotGPIO, Pi, ReverseDirection),
         Pi(Pi), EnablePot(EnablePot) {
-    // One of the potentiometer's best features is that it remembers its
-    // positions across rrestarts. So start in manual mode to make use of it.
-    setMode(Mode::Manual);
+    if (EnablePot)
+      // One of the potentiometer's best features is that it remembers its
+      // positions across restarts. So start in manual mode to make use of it.
+      setMode(Mode::Manual);
+    else
+      setMode(Mode::Presets);
   }
   void tick() final;
 };

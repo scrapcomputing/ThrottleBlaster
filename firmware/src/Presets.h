@@ -17,44 +17,45 @@ class PresetsTable {
   struct Entry {
     int PresetKHz;
     int ActualKHz;
-    int Period; ///> PWM Period
+    int Period;                 ///> PWM Period.
+    bool Deleted = false;       ///> If the user has deleted this preset.
     Entry(int PresetKHz, int ActualKHz, int Period)
         : PresetKHz(PresetKHz), ActualKHz(ActualKHz), Period(Period) {}
     Entry(FlashStorage &Flash, int &Offset) {
       PresetKHz = Flash.read(Offset++);
       ActualKHz = Flash.read(Offset++);
       Period = Flash.read(Offset++);
+      Deleted = Flash.read(Offset++);
     }
     void dump() const {
-      std::cout << PresetKHz << ", " << ActualKHz << ", " << Period << "\n";
+      std::cout << PresetKHz << ", " << ActualKHz << ", " << Period << ", "
+                << Deleted << "\n";
     }
     /// Helper for writing to Flash.
     void appendToVec(std::vector<int> &Vec) const {
       Vec.push_back(PresetKHz);
       Vec.push_back(ActualKHz);
       Vec.push_back(Period);
+      Vec.push_back(Deleted);
     }
     unsigned checksum() const {
-      return (unsigned)PresetKHz ^ (unsigned)ActualKHz ^ (unsigned)Period;
+      return (unsigned)PresetKHz ^ (unsigned)ActualKHz ^ (unsigned)Period ^
+             (unsigned)Deleted;
     }
   };
 
   static constexpr const int DefaultPeriod = 8; // ~50us
 
-  // const std::vector<Entry> ImmutableTable = {
-  //     {4770, 4770, DefaultPeriod},     {8000, 8000, DefaultPeriod},
-  //     {10000, 10000, DefaultPeriod},   {25000, 25000, DefaultPeriod},
-  //     {33000, 33000, DefaultPeriod},   {66000, 66000, DefaultPeriod},
-  //     {100000, 100000, DefaultPeriod}, {133000, 133000, DefaultPeriod},
-  //     {266000, 266000, DefaultPeriod}, {450000, 450000, DefaultPeriod},
-  //     {733000, 733000, DefaultPeriod}, {1000000, 1000000, DefaultPeriod},
-  //     {1666000, 1666000, DefaultPeriod}, {3200000, 3200000, DefaultPeriod}};
   const std::vector<Entry> ImmutableTable = {
-      {4770, 4770, DefaultPeriod},     {8000, 8000, DefaultPeriod},
-      {10000, 10000, DefaultPeriod},   {25000, 25000, DefaultPeriod},
-      {33000, 33000, DefaultPeriod},   {66000, 66000, DefaultPeriod},
-      {133000, 133000, DefaultPeriod}, {450000, 450000, DefaultPeriod},
-      {733000, 733000, DefaultPeriod}};
+      Entry(4770, 4770, DefaultPeriod),
+      Entry(8000, 8000, DefaultPeriod),
+      Entry(10000, 10000, DefaultPeriod),
+      Entry(25000, 25000, DefaultPeriod),
+      Entry(33000, 33000, DefaultPeriod),
+      Entry(66000, 66000, DefaultPeriod),
+      Entry(133000, 133000, DefaultPeriod),
+      Entry(450000, 450000, DefaultPeriod),
+      Entry(733000, 733000, DefaultPeriod)};
 
   std::vector<Entry> Table;
 
@@ -77,10 +78,28 @@ public:
   void decrActualKHz();
   int getPeriod() const { return Table[Idx].Period; }
   void incrPeriod();
+  void toggleDeleted() { Table[Idx].Deleted = !Table[Idx].Deleted; }
+  bool isDeleted() const { return Table[Idx].Deleted; }
   void decrPeriod();
-  void prev() { Idx = std::max(0, Idx - 1); }
-  void next() { Idx = std::min(getMaxIdx(), Idx + 1); }
+  void prev() {
+    int FoundIdx = Idx;
+    do {
+      --FoundIdx;
+    } while (FoundIdx >= 0 && Table[FoundIdx].Deleted);
+    if (FoundIdx >= 0)            // if legal
+      Idx = FoundIdx;
+  }
+  void next() {
+    int FoundIdx = Idx;
+    do {
+      ++FoundIdx;
+    } while (FoundIdx < getMaxIdx() && Table[FoundIdx].Deleted);
+    if (FoundIdx <= getMaxIdx()) // if legal
+      Idx = FoundIdx;
+  }
   void setIdx(int NewIdx) { Idx = std::clamp(NewIdx, 0, getMaxIdx()); }
+  /// Returns the minimum Idx that is not deleted.
+  int minNonDeleted() const;
   void cyclePrev();
   void cycleNext();
   void cycleMax();

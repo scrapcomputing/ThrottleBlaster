@@ -32,6 +32,7 @@ protected:
     Presets,
     ConfigMHz,
     ConfigPeriod,
+    DeletePreset,
     Manual,
     ConfigMaxMHz,
     ResetToDefaults,
@@ -46,6 +47,7 @@ protected:
     case Mode::Presets: return "Presets";
     case Mode::ConfigMHz: return "ConfigMHz";
     case Mode::ConfigPeriod: return "ConfigPeriod";
+    case Mode::DeletePreset: return "DeletePreset";
     case Mode::Manual: return "Manual";
     case Mode::ConfigMaxMHz: return "ConfigMaxMHz";
     case Mode::ResetToDefaults: return "ResetToDefaults";
@@ -60,6 +62,7 @@ protected:
   void tryWritePresetsToFlash();
   Mode getMode() const { return CurrMode; }
 
+public:
   static constexpr const char *MsgActualFreq = "FrE";
   static constexpr const char *MsgPeriod = "PEr";
   static constexpr const char *MsgMaxMHz = "CPUF";
@@ -71,10 +74,15 @@ protected:
   static constexpr const char *MsgUartErr = "UErr";
   static constexpr const char *MsgUartMode = "UArt";
   static constexpr const char *MsgResetDetected = "boot";
+  static constexpr const char *MsgDeletePreset = "dEL";
+  static constexpr const char *MsgYes = "yes";
+  static constexpr const char *MsgNo = " no";
 
+protected:
   int BeforeMaxMHz = 0;
   int BeforeActualKHz = 0;
   int BeforePeriod = 0;
+  bool BeforeDeleted = false;
 
   std::vector<Button</*OffVal=*/true, ButtonDebounceSz, ButtonLongPressCnt,
                      ButtonMedReleaseCnt>>

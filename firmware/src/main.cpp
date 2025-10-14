@@ -3,6 +3,7 @@
 // Copyright (C) 2024 Scrap Computing
 //
 
+#include "CommonLogic.h"
 #include "ConfigOpts.h"
 #include "Debug.h"
 #include "DutyCycle.h"
@@ -23,7 +24,6 @@
 
 PresetsTable Presets;
 
-
 static void PioPWMSetPeriod(PIO Pio, uint SM, uint32_t Period) {
   pio_sm_set_enabled(Pio, SM, false);
   pio_sm_put_blocking(Pio, SM, Period);
@@ -42,6 +42,8 @@ enum class UIMode {
   Button,
   ButtonWithPot,
 };
+
+static UIMode Mode;
 
 const char *getUIModeStr(UIMode Mode) {
   switch (Mode) {
@@ -110,12 +112,69 @@ public:
   }
 };
 
-// Core 0 is handling the UI.
-static void core0_main_loop(Pico &Pico, Display &Disp, FlashStorage &Flash,
-                            DutyCycle &DC, Uart &Uart) {
-  std::unique_ptr<CommonLogic> UI;
-  auto Mode = getUIMode(Pico);
+// Hack for linking error: undefined reference to `__dso_handle'
+static void *__dso_handle = 0;
+
+static bool resetButtonPushed() {
+  // Get the reset button GPIO depending on operating mode.
+  int ResetBtn1 = 0;
+  std::optional<int> ResetBtn2;
+  switch (Mode) {
+  case UIMode::Rotary: {
+    ResetBtn1 = RotarySwGPIO;
+    break;
+  }
+  case UIMode::Button:
+  case UIMode::ButtonWithPot:
+    ResetBtn1 = LeftButtonGPIO;
+    break;
+  case UIMode::TwoButton:
+    ResetBtn1 = LeftButtonGPIO;
+    ResetBtn2 = RightButtonGPIO;
+    break;
+  }
+
+  // Check that the user is pressing the reset button for a duration of
+  // ResetBtnPressMs ms.
+  for (int Ms = 0; Ms < ResetBtnPressMs; Ms += ResetBtnCheckMs) {
+    if (!ResetBtn2) {
+      if (gpio_get(ResetBtn1))
+        return false;
+    } else {
+      if (gpio_get(ResetBtn1) && gpio_get(*ResetBtn2))
+        return false;
+    }
+    sleep_ms(ResetBtnCheckMs);
+  }
+  return true;
+}
+
+int main() {
+  (void)__dso_handle;
+  Pico Pico;
+  DBG_PRINT(sleep_ms(1000);)
+  DBG_PRINT(std::cout << "ThrottleBlaster rev." << REVISION_MAJOR << "."
+                      << REVISION_MINOR << "\n";)
+  Pico.initGPIO(PICO_DEFAULT_LED_PIN, GPIO_OUT, Pico::Pull::Down, "LED");
+  Pico.initGPIO(ThrottleGPIO, GPIO_OUT, Pico::Pull::Down, "Throttle");
+
+  Pico.initGPIO(ModeJP1GPIO, GPIO_IN, Pico::Pull::Up, "ModeJP1");
+  Pico.initGPIO(ModeJP2GPIO, GPIO_IN, Pico::Pull::Up, "ModeJP2");
+
+  Pico.initGPIO(ReverseDirectionGPIO, GPIO_IN, Pico::Pull::Up,
+                "ReverseDirectionJP");
+
+  Display Disp(DisplayClkGPIO, DisplayDioGPIO);
+
+  // DutyCycle needs an updated Presets.
+  DutyCycle DC(Presets);
+
+  Mode = getUIMode(Pico);
   DBG_PRINT(std::cout << "Mode=" << getUIModeStr(Mode) << "\n";)
+
+  FlashStorage Flash;
+
+  std::unique_ptr<CommonLogic> UI;
   switch (Mode) {
   case UIMode::Rotary: {
     bool ReverseDirection = Pico.getGPIO(ReverseDirectionGPIO);
@@ -140,52 +199,43 @@ static void core0_main_loop(Pico &Pico, Display &Disp, FlashStorage &Flash,
     break;
   }
 
-  ThrottlePin TPin(Pico, DC);
+  // Read Presets from flash.
+  if (resetButtonPushed()) {
+    Disp.setFlash(true);
+    Disp.printTxt(CommonLogic::MsgResetToDefaults);
+    DBG_PRINT(std::cerr << "*** Resetting to factory defaults ***\n";)
+    Presets.resetToDefaults(Flash);
+    // Flash the LED to let the user know that reset was succesfull
+    for (uint32_t Cnt = 0; Cnt != ResetDefaultFlashCnt; ++Cnt) {
+      if (Cnt % 2 == 0)
+        Pico.ledON();
+      else
+        Pico.ledOFF();
+      sleep_ms(ResetDefaultsFlashOnMs);
+    }
+    Pico.ledON();
+    Disp.setFlash(false);
+  }
+  if (Flash.valid())
+    Presets.readFromFlash(Flash);
+  else {
+    DBG_PRINT(std::cout << "Flash not valid, reset to defaults";)
+    Disp.setFlash(true);
+    Presets.resetToDefaults(Flash);
+    sleep_ms(1000);
+    Disp.setFlash(false);
+  }
 
-#ifndef DISALBE_PICO_LED
+  Uart Uart(UartGPIO, UartRequestedBaud, UartDataBits, UartStopBits, UartParity,
+            UartFlowControl);
+
+  ThrottlePin TPin(Pico, DC);
   Pico.ledON();
-#endif
   while (true) {
     // The main entry point for the UI.
     UI->tickAll(Uart);
     // Update the Throttle pin PWM if needed.
     TPin.updatePWM();
   }
-}
-
-// Hack for linking error: undefined reference to `__dso_handle'
-static void *__dso_handle = 0;
-
-int main() {
-  (void)__dso_handle;
-  Pico Pico;
-  DBG_PRINT(sleep_ms(1000);)
-  DBG_PRINT(std::cout << "ThrottleBlaster rev." << REVISION_MAJOR << "."
-                      << REVISION_MINOR << "\n";)
-  Pico.initGPIO(PICO_DEFAULT_LED_PIN, GPIO_OUT, Pico::Pull::Down, "LED");
-  Pico.initGPIO(ThrottleGPIO, GPIO_OUT, Pico::Pull::Down, "Throttle");
-
-  Pico.initGPIO(ModeJP1GPIO, GPIO_IN, Pico::Pull::Up, "ModeJP1");
-  Pico.initGPIO(ModeJP2GPIO, GPIO_IN, Pico::Pull::Up, "ModeJP2");
-
-  Pico.initGPIO(ReverseDirectionGPIO, GPIO_IN, Pico::Pull::Up,
-                "ReverseDirectionJP");
-
-  Display Disp(DisplayClkGPIO, DisplayDioGPIO);
-
-  // Read Presets from flash.
-  FlashStorage Flash;
-  if (Flash.valid())
-    Presets.readFromFlash(Flash);
-  else
-    DBG_PRINT(std::cout << "Flash not valid!\n";)
-
-  // DutyCycle needs an updated Presets.
-  DutyCycle DC(Presets);
-
-  Uart Uart(UartGPIO, UartRequestedBaud, UartDataBits, UartStopBits, UartParity,
-            UartFlowControl);
-
-  core0_main_loop(Pico, Disp, Flash, DC, Uart);
   return 0;
 }

@@ -32,8 +32,17 @@ void PresetsTable::decrPeriod() {
   Val = std::max(PeriodLimitLo, Val - 1);
 }
 
+int PresetsTable::minNonDeleted() const {
+  for (int Idx = 0, E = getMaxIdx(); Idx <= E; ++Idx) {
+    if (!Table[Idx].Deleted)
+      return Idx;
+  }
+  std::cerr << "minNonDeleted() beyond max!\n";
+  return 0;
+}
+
 void PresetsTable::cyclePrev() {
-  if (Idx == 0)
+  if (Idx == minNonDeleted())
     Idx = getMaxIdx();
   else
     prev();

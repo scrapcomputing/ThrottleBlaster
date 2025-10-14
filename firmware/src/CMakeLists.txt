@@ -11,7 +11,6 @@ cmake_minimum_required(VERSION 3.13)
 # -------
 # o -DDISPLAY_SHIFT_LEFT=<num> If the numbers displayed need shifting
 # o -DDISPLAY_BRIGHTNESS=<num> (0-7) Sets the brightness 7 is max, default: 1.
-# o -DDISABLE_PICO_LED=on to disable the Pico's blinking LED.
 # o -DDBGPRINT=on to enable debug messages
 #
 # This will place the firmware into: build/ThrottleBlaster.uf2
@@ -100,7 +99,6 @@ if (DISABLE_USB_DBG STREQUAL "0")
 endif ()
 message("DISABLE_USB_DBG = ${DISABLE_USB_DBG}")
 
-message("PICO_LED = ${PICO_LED}")
 message("PICO_TM1637_PATH = ${PICO_TM1637_PATH}")
 message("LCD_SHIFT_LEFT = ${LCD_SHIFT_LEFT}")
 message("MHZ = ${MHZ}")

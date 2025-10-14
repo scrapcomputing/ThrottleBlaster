@@ -15,7 +15,7 @@ class FlashStorage {
   // Use the last sector (4KB) of the 2MB flash.
   static constexpr const int BaseOffset = 2 * (1u << 20) - FLASH_SECTOR_SIZE;
   static constexpr const int BytesToFlash = FLASH_SECTOR_SIZE;
-  std::vector<int> MagicNumber = {11111111, 42, 0, 666, 11111111};
+  std::vector<int> MagicNumber = {11191111, 42 + 1, 0, 666, 11111191};
 
   /// Points to the first usable int ptr, after the magic number and revision.
   const int *FlashArray = nullptr;
@@ -26,9 +26,7 @@ public:
   FlashStorage();
   void write(const std::vector<int> &Values);
   /// \Reads a value at \p ValueIdx offset (after the magic numbers).
-  int read(int ValueIdx) const {
-    return FlashArray[ValueIdx];
-  }
+  int read(int ValueIdx) const { return FlashArray[ValueIdx]; }
   std::pair<int, int> readRevision() const;
   std::vector<int> readMagicNumber() const;
   bool valid() const;

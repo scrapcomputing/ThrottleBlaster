@@ -52,6 +52,10 @@ It is tailored to the needs of vintage PC enthusiasts, so it drives a 4-digit 7-
 - The devices starts at the "Presets" state (mode).
 - Turn the knob to select a frequency
 - Short push to switch to fine-grain frequency selection
+- Long push to enter configuration of the current preset:
+  - Fine-tune actual frequency, short push to switch to PWM period tuning. Long-push escapes.
+  - Fine-tune PWM period, short push to switch to preset deletion. Long-push escapes.
+  - Select if preset should be deleted, short push to confirm.
 
 <img src='img/rotary_states.png' height=240 width=auto>
 
@@ -94,6 +98,12 @@ It is tailored to the needs of vintage PC enthusiasts, so it drives a 4-digit 7-
 
 You can connect to the Throttle Blaster via the serial port and set the Frequency and PWM Period.
 This is convenient for launching a game with a `.bat` file that first configures the Throttle Blaster and then launches the game.
+
+## Reset to factory defaults during power on (since rev 0.9)
+
+Press the button (rotary encoder, or any individual button in other modes) and plug in the ThrottleBlaster to power. The led on the Pico will start flashing fast for around 2 seconds and the MHz display will show "RES".
+
+This helps revert the deleted presets or any potential flash-related issue.
 
 ### UART Circuit
 - Connect the Throttle Blaster's Tx pin to the PC's serial port Rx pin (that is pin 2 of the serial connector), the Throttle Blaster's Rx pin to serial Tx (pin 3) and ground to ground (pin 5)
@@ -277,6 +287,7 @@ So I don't think there is a way to get the Throttle Blaster to work universally 
 
 
 # Change Log
+- Rev 0.9: Allows deletion of presets and adds flash reset when button pressed during boot.
 - Rev 0.8e: Fixes single/two-button configuration bug (introduced in 0.8b). Adds Pico2 support.
 - Rev 0.8d: Fixes reset detection
 - Rev 0.8c: Fixes bugs introduced in Rev 0.8b.
