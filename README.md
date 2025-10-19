@@ -206,7 +206,7 @@ The Throttle Blaster circuit is fairly simple:
 <img src='img/ThrottleBlaster_PCB_front.jpg' alt="Throttle Blaster PCB Front" height=240 width=auto>
 <img src='img/ThrottleBlaster_PCB_back.jpg' alt="Throttle Blaster PCB Back" height=240 width=auto>
 
-## Bill Of Materials
+## Bill Of Materials (BOM)
 
 Download gerbers: https://github.com/scrapcomputing/ThrottleBlaster/releases
 
@@ -235,7 +235,7 @@ U2             | 1                 | Raspberry Pi Pico                          
 U3             | 1                 | 1x04 horizontal pin header 2.54mm pitch               | For connecting to the floppy power connector, for powering the unit.
 C1             | 1 (mode POT)      | 100pF Ceramic capacitor SMD 1205                      | Used to reduce potentiometer noise.
 C2,C3,C4,C5,C6 | 5 (optional UART) | 1uF Ceramic Capacitor SMD 1206                        | For MAX3232 (serial port)
-U4             | 1 (optional UART) | MAX3232 SOIC-16 5.3x10.2mm (Commonly listed as 16-SOIC 3.90mm width) | For controlling the Throttle Blaster via the serial port.
+U4             | 1 (optional UART) | MAX3232 SOIC-16 5.3x10.2mm (Commonly listed as 16-SOIC 3.90mm width) | For controlling the Throttle Blaster via the serial port. **WARNING:** There are many fakes/clones of the MAX3232 available online but these are known not to work well or at all. They may need smaller capacitor values as mentioned in [fake max3232 issue](https://github.com/scrapcomputing/ThrottleBlaster/issues/24#). So please avoid them and get a MAX3232 from a known brand and supplier.
 
 ## Using the circuit for the first time
 - Select the operation mode using jumpers JP1/JP2.
