@@ -13,6 +13,8 @@
 #include <list>
 #include <pico/multicore.h>
 
+extern bool Core1Enabled;
+
 class RotaryEncoder {
   int ClkPin;
   int DtPin;

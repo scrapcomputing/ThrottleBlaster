@@ -5,6 +5,7 @@
 
 #include "Flash.h"
 #include "Debug.h"
+#include "RotaryEncoder.h"
 #include <iostream>
 #include <pico/multicore.h>
 
@@ -32,8 +33,6 @@ FlashStorage::FlashStorage() {
                     /*MagicNumber:*/ MagicNumber.size() *
                         sizeof(MagicNumber[0]));
 }
-
-extern bool Core1Enabled;
 
 void FlashStorage::write(const std::vector<int> &Values) {
   DBG_PRINT(std::cout << "BaseOffset=" << BaseOffset
