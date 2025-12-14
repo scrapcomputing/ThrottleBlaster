@@ -6,35 +6,18 @@
 void CommonLogic::setMode(Mode NewMode) {
   setModeInit(NewMode);
 
-  BeforeMaxMHz = Presets.getMaxMHz();
-  BeforePeriod = Presets.getPeriod();
-  BeforeActualKHz = Presets.getActualKHz();
-  BeforeDeleted = Presets.isDeleted();
-
   CurrMode = NewMode;
   DBG_PRINT(std::cout << getModeStr(CurrMode) << "\n";)
 }
 
 void CommonLogic::tryWritePresetsToFlash() {
-  if (Presets.getActualKHz() != BeforeActualKHz ||
-      Presets.getPeriod() != BeforePeriod ||
-      Presets.getMaxMHz() != BeforeMaxMHz ||
-      Presets.isDeleted() != BeforeDeleted) {
-    DBG_PRINT(std::cout << "WriteToFlash:\n";)
-    DBG_PRINT(std::cout << "           Before After\n";)
-    DBG_PRINT(std::cout << "ActualKHz: " << BeforeActualKHz << " "
-                        << Presets.getActualKHz() << "\n";)
-    DBG_PRINT(std::cout << "Period:       " << BeforePeriod << " "
-                        << Presets.getPeriod() << "\n";)
-    DBG_PRINT(std::cout << "MaxMHz:    " << BeforeMaxMHz << " "
-                        << Presets.getMaxMHz() << "\n";)
-    DBG_PRINT(std::cout << "Deleted:    " << BeforeDeleted << " "
-                        << Presets.isDeleted() << "\n";)
-    Presets.writeToFlash(Flash);
-  } else {
-    DBG_PRINT(
-        std::cout << "Not writing to flash (no change in KHz/Period/MaxMHz)\n";)
-  }
+  DBG_PRINT(std::cout << "WriteToFlash:\n";)
+  DBG_PRINT(std::cout << "           Before After\n";)
+  DBG_PRINT(std::cout << "ActualKHz: " << Presets.getActualKHz() << "\n";)
+  DBG_PRINT(std::cout << "Period:       " << Presets.getPeriod() << "\n";)
+  DBG_PRINT(std::cout << "MaxMHz:    " << Presets.getMaxMHz() << "\n";)
+  DBG_PRINT(std::cout << "Deleted:    " << Presets.isDeleted() << "\n";)
+  Presets.writeToFlash(Flash);
 }
 
 void CommonLogic::printTxtAndSleep(const char *Str) {

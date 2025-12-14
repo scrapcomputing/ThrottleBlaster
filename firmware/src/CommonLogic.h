@@ -79,11 +79,6 @@ public:
   static constexpr const char *MsgNo = " no";
 
 protected:
-  int BeforeMaxMHz = 0;
-  int BeforeActualKHz = 0;
-  int BeforePeriod = 0;
-  bool BeforeDeleted = false;
-
   std::vector<Button</*OffVal=*/true, ButtonDebounceSz, ButtonLongPressCnt,
                      ButtonMedReleaseCnt>>
       PresetBtns;
