@@ -40,7 +40,7 @@ void TwoButtonLogic::cyclePresets(ButtonState LBtnState,
   case ButtonState::Release:
   case ButtonState::MedRelease:
     Presets.prev();
-    DC.setKHz(Presets.getKHz());
+    DC.setKHz(Presets.getActualKHz());
     DC.setPeriod(Presets.getPeriod());
     break;
   case ButtonState::LongPress:
@@ -53,7 +53,7 @@ void TwoButtonLogic::cyclePresets(ButtonState LBtnState,
   case ButtonState::Release:
   case ButtonState::MedRelease:
     Presets.next();
-    DC.setKHz(Presets.getKHz());
+    DC.setKHz(Presets.getActualKHz());
     DC.setPeriod(Presets.getPeriod());
     break;
   case ButtonState::LongPress:
@@ -283,6 +283,7 @@ void TwoButtonLogic::configMHz(ButtonState LBtnState, ButtonState RBtnState) {
   case ButtonState::Release:
   case ButtonState::MedRelease:
     Presets.decrActualKHz();
+    DC.setKHz(Presets.getActualKHz());
     return;
   case ButtonState::LongPress:
     LongPress();
@@ -295,6 +296,7 @@ void TwoButtonLogic::configMHz(ButtonState LBtnState, ButtonState RBtnState) {
   case ButtonState::Release:
   case ButtonState::MedRelease:
     Presets.incrActualKHz();
+    DC.setKHz(Presets.getActualKHz());
     return;
   case ButtonState::LongPress:
     LongPress();
