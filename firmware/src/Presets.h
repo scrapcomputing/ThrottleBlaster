@@ -98,6 +98,13 @@ public:
       Idx = FoundIdx;
   }
   void setIdx(int NewIdx) { Idx = std::clamp(NewIdx, 0, getMaxIdx()); }
+  /// \Returns the index of the preset with nominal frequency \p KHz, or -1.
+  int findIdxByKHz(int KHz) const {
+    for (int I = 0, E = (int)Table.size(); I != E; ++I)
+      if (Table[I].PresetKHz == KHz)
+        return I;
+    return -1;
+  }
   /// Returns the minimum Idx that is not deleted.
   int minNonDeleted() const;
   void cyclePrev();

@@ -111,16 +111,28 @@ This helps revert the deleted presets or any potential flash-related issue.
 
 ### UART Software
 - Serial port settings: 9600 8N1, no flow control
-- The string to send is in the form `F<MHz>P<Period>\r`, where:
-  - `<MHz>` is the desired effective frequency in MHz (float),
-  - `<Period>` is the PWM Period level (1-256),
-  - `\r` (also seen as `^M`) is the Carriage-Return character (ASCII 13 0x0d).
-  - For example `F4.77P8` sets the frequency to `4.77MHz` and the PWM period to `8` which is a around 50us.
+- Each command is a line terminated by `\r` (also seen as `^M`, the Carriage-Return character, ASCII 13 0x0d). A `\n` is ignored. Commands are case-insensitive.
+- Every command gets exactly one reply line, terminated by `\r\n`: `OK <status>` on success, or `ERR <reason>` on failure.
+- Commands that change the frequency reply after the change has been applied (after the 1 second message on the display), so a batch file can wait for the reply before launching a game.
+
+ Command            | Description                                                                                         | Example reply
+--------------------|-----------------------------------------------------------------------------------------------------|---------------------------------------
+ `F<MHz>P<Period>`  | Set the effective frequency in MHz (float) and the PWM Period level (1-256).                       | `OK F=4.77 P=8 MAX=1666 MODE=UART`
+ `F<MHz>`           | Same as above, but keeps the current PWM Period.                                                    | `OK F=4.77 P=8 MAX=1666 MODE=UART`
+ `F0`               | Set the maximum frequency.                                                                          | `OK F=1666.00 P=8 MAX=1666 MODE=UART`
+ `S<MHz>`           | Select the preset with this frequency (e.g. `S4.77`, `S133`), using its tuned frequency and period, just like the preset buttons. | `OK F=4.77 P=8 MAX=1666 MODE=PRESETS`
+ `SMAX`             | Select the maximum frequency preset, just like the last preset button.                              | `OK F=1666.00 P=8 MAX=1666 MODE=PRESETS`
+ `M<MHz>`           | Set the maximum CPU frequency (CPUF), save it to flash and switch to it.                            | `OK F=1666.00 P=8 MAX=1666 MODE=PRESETS`
+ `R`                | Return to the presets: restores the selected preset and hands control back to the front panel.      | `OK F=133.00 P=8 MAX=1666 MODE=PRESETS`
+ `?`                | Query the current state. Replies immediately and changes nothing.                                   | `F=133.00 P=8 MAX=1666 MODE=PRESETS`
+
+- `MODE` is one of `PRESETS`, `MANUAL`, `UART`, `BOOT` or `CONFIG` (when the front panel is in one of the configuration menus).
+- Errors: `ERR SYNTAX` (unknown command), `ERR RANGE` (value out of range, the frequency can't exceed the maximum), `ERR NOPRESET` (no preset with that frequency), `ERR PERIOD` (the period is too short for such a low frequency, the CPU would freeze, use a larger period), `ERR TOOLONG` (more than 16 characters).
+- Please wait for the reply before sending the next command.
+- For example `F4.77P8` sets the frequency to `4.77MHz` and the PWM period to `8` which is a around 50us.
 - In DOS you can use a terminal emulator, like [Kermit](http://www.columbia.edu/kermit/ftp/archives/msk314.zip), to connect and send the command.
   - You could use this one-liner in a batch file: `kermit set port COM1, set speed 9600, output F4.77P8\13`. This will set the frequency to 4.77 MHz, the period to 8 and will send a Carriage-Return character (`\13`).
-
-> **Note**
-> Changing the frequency is not instantaneous. So if you are setting the frequency in a batch file, please consider adding a delay before launching the game.
+  - To also wait for the confirmation (up to 3 seconds): `kermit set port COM1, set speed 9600, output S4.77\13, input 3 OK`
 
 > **Note**
 > Please note that the serial-port functionality is totally optional. You don't need to populate the MAX3232 IC and its capacitors if you are not planning to use it.
