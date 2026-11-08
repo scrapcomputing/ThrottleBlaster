@@ -42,7 +42,7 @@ Uart::Uart(int GPIO, uint32_t RequestedBaudrate, uint32_t DataBits,
   uart_set_hw_flow(Instance, /*cts=*/FlowControl, /*rts=*/FlowControl);
   uart_set_format(Instance, /*data_bits=*/DataBits, /*stop_bits=*/StopBits,
                   /*parity=*/Parity);
-  uart_set_fifo_enabled(Instance, false);
+  uart_set_fifo_enabled(Instance, true);
   DBG_PRINT(std::cerr << "Actual Baudrate=" << ActualBaudrate << "\n";
             std::cerr << "DataBits=" << DataBits << "\n";
             std::cerr << "StopBits=" << StopBits << "\n";

@@ -162,6 +162,8 @@ void PotentiometerLogic::configResetToDefaults(int PotVal,
     break;
   case ButtonState::LongPress:
     Presets.resetToDefaults(Flash);
+    DC.setKHz(Presets.getActualKHz());
+    DC.setPeriod(Presets.getPeriod());
     Disp.setFlash(false);
     printTxtAndSleep(MsgConfirm);
     savePotVal(PotVal);

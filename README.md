@@ -113,7 +113,8 @@ This helps revert the deleted presets or any potential flash-related issue.
 - Serial port settings: 9600 8N1, no flow control
 - Each command is a line terminated by `\r` (also seen as `^M`, the Carriage-Return character, ASCII 13 0x0d). A `\n` is ignored. Commands are case-insensitive.
 - Every command gets exactly one reply line, terminated by `\r\n`: `OK <status>` on success, or `ERR <reason>` on failure.
-- Commands that change the frequency reply after the change has been applied (after the 1 second message on the display), so a batch file can wait for the reply before launching a game.
+- Commands that change the frequency reply after the 1 second message on the display, and the new frequency takes effect right after the reply is sent, so a batch file can wait for the reply before launching a game.
+- All the front panel functions are available over the serial port, and a serial command closes any configuration menu that is open on the front panel.
 
  Command            | Description                                                                                         | Example reply
 --------------------|-----------------------------------------------------------------------------------------------------|---------------------------------------
@@ -124,10 +125,13 @@ This helps revert the deleted presets or any potential flash-related issue.
  `SMAX`             | Select the maximum frequency preset, just like the last preset button.                              | `OK F=1666.00 P=8 MAX=1666 MODE=PRESETS`
  `M<MHz>`           | Set the maximum CPU frequency (CPUF), save it to flash and switch to it.                            | `OK F=1666.00 P=8 MAX=1666 MODE=PRESETS`
  `R`                | Return to the presets: restores the selected preset and hands control back to the front panel.      | `OK F=133.00 P=8 MAX=1666 MODE=PRESETS`
+ `W<MHz>`           | Store the current frequency and period in the preset with this frequency, save to flash and select it. Tune with `F<MHz>P<Period>` first. | `OK F=4.50 P=16 MAX=1666 MODE=PRESETS`
+ `D<MHz>`           | Delete the preset with this frequency and select the next one, or restore it if already deleted. Saves to flash. | `OK DELETED F=8.00 P=8 MAX=1666 MODE=PRESETS` or `OK RESTORED F=4.77 P=8 MAX=1666 MODE=PRESETS`
+ `X`                | Reset to factory defaults, including the maximum CPU frequency, and save to flash.                  | `OK F=200.00 P=8 MAX=200 MODE=PRESETS`
  `?`                | Query the current state. Replies immediately and changes nothing.                                   | `F=133.00 P=8 MAX=1666 MODE=PRESETS`
 
 - `MODE` is one of `PRESETS`, `MANUAL`, `UART`, `BOOT` or `CONFIG` (when the front panel is in one of the configuration menus).
-- Errors: `ERR SYNTAX` (unknown command), `ERR RANGE` (value out of range, the frequency can't exceed the maximum), `ERR NOPRESET` (no preset with that frequency), `ERR PERIOD` (the period is too short for such a low frequency, the CPU would freeze, use a larger period), `ERR TOOLONG` (more than 16 characters).
+- Errors: `ERR SYNTAX` (unknown command), `ERR RANGE` (value out of range, the frequency can't exceed the maximum), `ERR NOPRESET` (no preset with that frequency, or `W`/`D` on the maximum frequency preset, which can only be changed with `M`), `ERR PERIOD` (the period is too short for such a low frequency, the CPU would freeze, use a larger period), `ERR BOOT` (`W` during the temporary maximum speed after a reset), `ERR TOOLONG` (more than 16 characters).
 - Please wait for the reply before sending the next command.
 - For example `F4.77P8` sets the frequency to `4.77MHz` and the PWM period to `8` which is a around 50us.
 - In DOS you can use a terminal emulator, like [Kermit](http://www.columbia.edu/kermit/ftp/archives/msk314.zip), to connect and send the command.

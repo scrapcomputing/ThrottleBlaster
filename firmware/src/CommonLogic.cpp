@@ -94,6 +94,16 @@ void CommonLogic::handleUartCmd(Uart &Uart, const std::string &Cmd) {
     printTxtAndSleep(MsgUartErr);
     Uart.writeBlockingStr(std::string("ERR ") + Reason + "\r\n");
   };
+  // Ends a command in Presets mode, running the selected preset. The serial
+  // port overrides any open menu, so make sure the display stops flashing.
+  auto ToPresets = [this, &Uart](const char *Msg, const char *Prefix = "OK ") {
+    Disp.setFlash(false);
+    setMode(Mode::Presets);
+    DC.setKHz(Presets.getActualKHz());
+    DC.setPeriod(Presets.getPeriod());
+    printTxtAndSleep(Msg);
+    sendUartStatus(Uart, Prefix);
+  };
   const char *Str = Cmd.c_str();
 
   // ? : Query. Reply immediately, nothing changes.
@@ -103,13 +113,13 @@ void CommonLogic::handleUartCmd(Uart &Uart, const std::string &Cmd) {
   }
 
   // R : Return to the presets, like a short push in Manual mode.
-  if (Cmd == "R") {
-    setMode(Mode::Presets);
-    DC.setKHz(Presets.getActualKHz());
-    DC.setPeriod(Presets.getPeriod());
-    printTxtAndSleep(MsgPresets);
-    sendUartStatus(Uart, "OK ");
-    return;
+  if (Cmd == "R")
+    return ToPresets(MsgPresets);
+
+  // X : Reset to factory defaults, like confirming the reset menu.
+  if (Cmd == "X") {
+    Presets.resetToDefaults(Flash);
+    return ToPresets(MsgConfirm);
   }
 
   // SMAX : Select the max frequency preset, like the last preset button.
@@ -128,10 +138,7 @@ void CommonLogic::handleUartCmd(Uart &Uart, const std::string &Cmd) {
         return Error("NOPRESET");
       applyPreset(Idx, /*IsLast=*/false);
     }
-    setMode(Mode::Presets);
-    printTxtAndSleep(MsgPresets);
-    sendUartStatus(Uart, "OK ");
-    return;
+    return ToPresets(MsgPresets);
   }
 
   // M<MHz> : Set the maximum CPU frequency and save it to flash, like
@@ -145,13 +152,43 @@ void CommonLogic::handleUartCmd(Uart &Uart, const std::string &Cmd) {
       return Error("RANGE");
     // This also selects the max frequency preset.
     Presets.updateMaxMHz(MaxMHz);
-    DC.setKHz(Presets.getActualKHz());
-    DC.setPeriod(Presets.getPeriod());
     tryWritePresetsToFlash();
-    setMode(Mode::Presets);
-    printTxtAndSleep(MsgConfirm);
-    sendUartStatus(Uart, "OK ");
-    return;
+    return ToPresets(MsgConfirm);
+  }
+
+  // W<MHz> : Store the current frequency and period in preset <MHz> and save
+  //          it to flash, like confirming the preset tuning menus.
+  // D<MHz> : Delete preset <MHz>, or restore it if it is already deleted.
+  // The max frequency preset can only be changed with M, like in the menus.
+  if (Cmd[0] == 'W' || Cmd[0] == 'D') {
+    bool IsDelete = Cmd[0] == 'D';
+    float MHz = 0;
+    int Len = 0;
+    if (sscanf(Str + 1, "%f%n", &MHz, &Len) != 1 || Str[1 + Len] != '\0')
+      return Error("SYNTAX");
+    int KHz = (int)lroundf(MHz * 1000);
+    int Idx = Presets.findIdxByKHz(KHz, /*IncludeDeleted=*/IsDelete);
+    if (Idx < 0 || KHz == Presets.getMaxKHz())
+      return Error("NOPRESET");
+    if (!IsDelete) {
+      // While booting the frequency is temporarily at max, don't store it.
+      if (getMode() == Mode::Boot)
+        return Error("BOOT");
+      if (DC.getKHz() < MHzLimitLo * 1000)
+        return Error("RANGE");
+      Presets.setIdx(Idx);
+      Presets.setTuning(DC.getKHz(), (DC.getPeriod() + 1) / 256);
+      tryWritePresetsToFlash();
+      return ToPresets(MsgConfirm);
+    }
+    Presets.setIdx(Idx);
+    Presets.toggleDeleted();
+    bool Deleted = Presets.isDeleted();
+    tryWritePresetsToFlash();
+    // Like the delete menu, move away from a preset that was just deleted.
+    if (Deleted)
+      Presets.next();
+    return ToPresets(MsgConfirm, Deleted ? "OK DELETED " : "OK RESTORED ");
   }
 
   // F<MHz>[P<Period>] : Set a raw frequency. F0 sets the max frequency.
@@ -177,6 +214,7 @@ void CommonLogic::handleUartCmd(Uart &Uart, const std::string &Cmd) {
     if (HasPeriod && (Period < PeriodLimitLo || Period > PeriodLimitHi))
       return Error("RANGE");
     if (KHz == 0) {
+      Disp.setFlash(false);
       setMode(Mode::Uart);
       printTxtAndSleep(MsgUartMode);
       DC.setMHzToMax();
@@ -189,6 +227,7 @@ void CommonLogic::handleUartCmd(Uart &Uart, const std::string &Cmd) {
     int RawPeriod = (1 << 8) * Period - 1;
     if ((int64_t)KHz * RawPeriod / Presets.getMaxKHz() == 0)
       return Error("PERIOD");
+    Disp.setFlash(false);
     setMode(Mode::Uart);
     DC.setKHz(KHz);
     DC.setPeriod(Period);

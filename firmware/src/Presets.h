@@ -99,11 +99,17 @@ public:
   }
   void setIdx(int NewIdx) { Idx = std::clamp(NewIdx, 0, getMaxIdx()); }
   /// \Returns the index of the preset with nominal frequency \p KHz, or -1.
-  int findIdxByKHz(int KHz) const {
+  /// Deleted presets are skipped unless \p IncludeDeleted is true.
+  int findIdxByKHz(int KHz, bool IncludeDeleted = false) const {
     for (int I = 0, E = (int)Table.size(); I != E; ++I)
-      if (Table[I].PresetKHz == KHz)
+      if (Table[I].PresetKHz == KHz && (IncludeDeleted || !Table[I].Deleted))
         return I;
     return -1;
+  }
+  /// Sets the actual frequency and the period of the selected preset.
+  void setTuning(int ActualKHz, int Period) {
+    Table[Idx].ActualKHz = ActualKHz;
+    Table[Idx].Period = Period;
   }
   /// Returns the minimum Idx that is not deleted.
   int minNonDeleted() const;

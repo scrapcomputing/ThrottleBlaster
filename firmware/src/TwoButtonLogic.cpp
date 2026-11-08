@@ -213,6 +213,8 @@ void TwoButtonLogic::configResetToDefaults(ButtonState LBtnState,
   }
   if (bothLongPress(LBtnState, RBtnState)) {
     Presets.resetToDefaults(Flash);
+    DC.setKHz(Presets.getActualKHz());
+    DC.setPeriod(Presets.getPeriod());
     Disp.setFlash(false);
     printTxtAndSleep(MsgConfirm);
     setMode(Mode::Presets);
