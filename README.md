@@ -110,32 +110,47 @@ This helps revert the deleted presets or any potential flash-related issue.
 
 
 ### UART Software
-- Serial port settings: 9600 8N1, no flow control
-- Each command is a line terminated by `\r` (also seen as `^M`, the Carriage-Return character, ASCII 13 0x0d). Non-printable characters are ignored, such as `\n` or the null bytes that some serial ports send when they are opened or closed. Commands are case-insensitive.
-- Every command gets exactly one reply line, terminated by `\r\n`: `OK <status>` on success, or `ERR <reason>` on failure.
-- Commands that change the frequency reply after the 1 second message on the display, and the new frequency takes effect right after the reply is sent, so a batch file can wait for the reply before launching a game.
-- All the front panel functions are available over the serial port, and a serial command closes any configuration menu that is open on the front panel.
+- Serial port settings: 9600 8N1, no flow control.
+- Commands:
+  - End each command with `\r`, the Carriage-Return (ASCII 13, also seen as `^M`).
+  - Upper and lower case both work.
+  - Non-printable characters, such as `\n` or `0x00`, are ignored.
+  - Wait for the reply before sending the next command.
+- Replies:
+  - One line per command, ending with `\r\n`.
+  - `OK <status>` on success, `ERR <reason>` on failure.
+  - Frequency changes reply after the 1 second display message, then take effect.
+- A serial command closes any open front panel menu.
 
- Command            | Description                                                                                         | Example reply
---------------------|-----------------------------------------------------------------------------------------------------|---------------------------------------
- `F<MHz>P<Period>`  | Set the effective frequency in MHz (float) and the PWM Period level (1-256).                       | `OK F=4.77 P=8 MAX=1200 MODE=UART`
- `F<MHz>`           | Same as above, but keeps the current PWM Period.                                                    | `OK F=4.77 P=8 MAX=1200 MODE=UART`
- `F0`               | Set the maximum frequency.                                                                          | `OK F=1200.00 P=8 MAX=1200 MODE=UART`
- `S<MHz>`           | Select the preset with this frequency (e.g. `S4.77`, `S133`), using its tuned frequency and period, just like the preset buttons. | `OK F=4.77 P=8 MAX=1200 MODE=PRESETS`
- `SMAX`             | Select the maximum frequency preset, just like the last preset button.                              | `OK F=1200.00 P=8 MAX=1200 MODE=PRESETS`
- `M<MHz>`           | Set the maximum CPU frequency (CPUF), save it to flash and switch to it.                            | `OK F=1200.00 P=8 MAX=1200 MODE=PRESETS`
- `R`                | Return to the presets: restores the selected preset and hands control back to the front panel.      | `OK F=133.00 P=8 MAX=1200 MODE=PRESETS`
- `W<MHz>`           | Store the current frequency and period in the preset with this frequency, save to flash and select it. Tune with `F<MHz>P<Period>` first. | `OK F=4.50 P=16 MAX=1200 MODE=PRESETS`
- `D<MHz>`           | Delete the preset with this frequency and select the next one, or restore it if already deleted. Saves to flash. | `OK DELETED F=8.00 P=8 MAX=1200 MODE=PRESETS` or `OK RESTORED F=4.77 P=8 MAX=1200 MODE=PRESETS`
- `X`                | Reset to factory defaults, including the maximum CPU frequency, and save to flash.                  | `OK F=200.00 P=8 MAX=200 MODE=PRESETS`
- `?`                | Query the current state. Replies immediately and changes nothing.                                   | `F=133.00 P=8 MAX=1200 MODE=PRESETS`
+ Command            | Description                                                       | Example reply
+--------------------|-------------------------------------------------------------------|---------------------------------------
+ `F<MHz>P<Period>`  | Run at this frequency (MHz, decimals allowed) and PWM period (1-256). | `OK F=4.77 P=8 MAX=1200 MODE=UART`
+ `F<MHz>`           | Same, but keep the current period.                                | `OK F=4.77 P=8 MAX=1200 MODE=UART`
+ `F0`               | Run at the maximum frequency.                                     | `OK F=1200.00 P=8 MAX=1200 MODE=UART`
+ `S<MHz>`           | Select a preset, like the preset buttons. For example `S4.77`.    | `OK F=4.77 P=8 MAX=1200 MODE=PRESETS`
+ `SMAX`             | Select the maximum frequency preset.                              | `OK F=1200.00 P=8 MAX=1200 MODE=PRESETS`
+ `M<MHz>`           | Set the maximum CPU frequency. Saved to flash.                    | `OK F=1200.00 P=8 MAX=1200 MODE=PRESETS`
+ `R`                | Return to the presets and the front panel.                        | `OK F=133.00 P=8 MAX=1200 MODE=PRESETS`
+ `W<MHz>`           | Save the current frequency and period to this preset.             | `OK F=4.50 P=16 MAX=1200 MODE=PRESETS`
+ `D<MHz>`           | Delete this preset, or restore it if deleted.                     | `OK DELETED F=8.00 P=8 MAX=1200 MODE=PRESETS`
+ `X`                | Reset to factory defaults, including the maximum.                 | `OK F=200.00 P=8 MAX=200 MODE=PRESETS`
+ `?`                | Show the current state. Changes nothing.                          | `F=133.00 P=8 MAX=1200 MODE=PRESETS`
 
-- `MODE` is one of `PRESETS`, `MANUAL`, `UART`, `BOOT` or `CONFIG` (when the front panel is in one of the configuration menus).
-- Errors: `ERR SYNTAX` (unknown command), `ERR RANGE` (value out of range, the frequency can't exceed the maximum), `ERR NOPRESET` (no preset with that frequency, or `W`/`D` on the maximum frequency preset, which can only be changed with `M`), `ERR PERIOD` (the period is too short for such a low frequency, the CPU would freeze, use a larger period), `ERR BOOT` (`W` during the temporary maximum speed after a reset), `ERR TOOLONG` (more than 16 characters).
-- Please wait for the reply before sending the next command.
-- For example `F4.77P8` sets the frequency to `4.77MHz` and the PWM period to `8` which is a around 50us.
-- In DOS you can use a terminal emulator, like [Kermit](http://www.columbia.edu/kermit/ftp/archives/msk314.zip), to connect and send the command.
-  - You could use this one-liner in a batch file: `kermit set port COM1, set speed 9600, output S4.77\13, input 3 \10`. It selects the 4.77 MHz preset. `\13` is the Carriage-Return that ends the command, and `input 3 \10` waits up to 3 seconds for the whole reply line (`OK ...` or `ERR ...`), so that it does not show up the next time.
+- `M`, `W`, `D` and `X` save to flash.
+- `MODE` is `PRESETS`, `MANUAL`, `UART`, `BOOT`, or `CONFIG` when a front panel menu is open.
+- Errors:
+  - `ERR SYNTAX`: unknown command.
+  - `ERR RANGE`: value out of range. The frequency can't exceed the maximum.
+  - `ERR NOPRESET`: no preset with that frequency. `W` and `D` can't change the maximum preset, use `M`.
+  - `ERR PERIOD`: period too short for this frequency, the CPU would freeze. Use a larger period.
+  - `ERR BOOT`: `W` sent during the temporary maximum speed after a reset.
+  - `ERR TOOLONG`: more than 16 characters.
+- Example: `F4.77P8` runs at 4.77 MHz with PWM period 8, around 50us.
+- In DOS, use [Kermit](http://www.columbia.edu/kermit/ftp/archives/msk314.zip):
+  - `kermit set port COM1, set speed 9600, output S4.77\13, input 3 \10` selects the 4.77 MHz preset.
+  - `\13` is the Carriage-Return that ends the command.
+  - `input 3 \10` waits up to 3 seconds for the reply line.
+  - [examples/THROTTLE.BAT](examples/THROTTLE.BAT) does this for any command, for example `THROTTLE S4.77`.
 
 > **Note**
 > Please note that the serial-port functionality is totally optional. You don't need to populate the MAX3232 IC and its capacitors if you are not planning to use it.
