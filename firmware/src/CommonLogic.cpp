@@ -244,8 +244,9 @@ void CommonLogic::uartTick(Uart &Uart) {
   if (Bytes.empty())
     return;
   for (char Byte : Bytes) {
-    // Skip some illegal chars.
-    if (Byte == '\n')
+    // Skip non-printable chars, such as '\n' or the 0x00 bytes that some
+    // serial ports send when they are opened or closed.
+    if (Byte != UartEOM && !isprint((unsigned char)Byte))
       continue;
     if (Byte != UartEOM) {
       if (!UartDiscard)

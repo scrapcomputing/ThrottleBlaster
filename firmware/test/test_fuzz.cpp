@@ -1,5 +1,6 @@
 // Random commands and knob events. Checks invariants after every step.
 #include "RotaryLogic.h"
+#include <cctype>
 #include <cstdio>
 #include <random>
 #include <string>
@@ -81,7 +82,7 @@ static void bytes(int Seeds, int &Bad) {
     for (int I = 0; I != 4000; ++I) {
       unsigned char B = G() % 4 == 0 ? "\r\nFSMWDXRP?.0123456789"[G() % 21] : (unsigned char)G();
       if (B == '\n') { U.Rx.push_back(B); continue; }
-      if (B == '\r') { if (Len) ++Want; Len = 0; } else ++Len;
+      if (B == '\r') { if (Len) ++Want; Len = 0; } else if (isprint(B)) ++Len;
       U.Rx.push_back(B);
     }
     while (!U.Rx.empty()) Ui.tickAll(U);

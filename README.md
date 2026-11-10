@@ -111,7 +111,7 @@ This helps revert the deleted presets or any potential flash-related issue.
 
 ### UART Software
 - Serial port settings: 9600 8N1, no flow control
-- Each command is a line terminated by `\r` (also seen as `^M`, the Carriage-Return character, ASCII 13 0x0d). A `\n` is ignored. Commands are case-insensitive.
+- Each command is a line terminated by `\r` (also seen as `^M`, the Carriage-Return character, ASCII 13 0x0d). Non-printable characters are ignored, such as `\n` or the null bytes that some serial ports send when they are opened or closed. Commands are case-insensitive.
 - Every command gets exactly one reply line, terminated by `\r\n`: `OK <status>` on success, or `ERR <reason>` on failure.
 - Commands that change the frequency reply after the 1 second message on the display, and the new frequency takes effect right after the reply is sent, so a batch file can wait for the reply before launching a game.
 - All the front panel functions are available over the serial port, and a serial command closes any configuration menu that is open on the front panel.
@@ -136,7 +136,7 @@ This helps revert the deleted presets or any potential flash-related issue.
 - For example `F4.77P8` sets the frequency to `4.77MHz` and the PWM period to `8` which is a around 50us.
 - In DOS you can use a terminal emulator, like [Kermit](http://www.columbia.edu/kermit/ftp/archives/msk314.zip), to connect and send the command.
   - You could use this one-liner in a batch file: `kermit set port COM1, set speed 9600, output F4.77P8\13`. This will set the frequency to 4.77 MHz, the period to 8 and will send a Carriage-Return character (`\13`).
-  - To also wait for the confirmation (up to 5 seconds): `kermit set port COM1, set speed 9600, output \13S4.77\13, input 5 OK, input 1 \10`. The leading `\13` clears any stray characters left on the serial line when the PC starts, otherwise the first command can fail with `ERR SYNTAX`. The last `input` reads the rest of the reply.
+  - To also wait for the confirmation (up to 3 seconds): `kermit set port COM1, set speed 9600, output S4.77\13, input 3 OK, input 1 \10`. The last `input` reads the rest of the reply, so that it does not show up the next time.
 
 > **Note**
 > Please note that the serial-port functionality is totally optional. You don't need to populate the MAX3232 IC and its capacitors if you are not planning to use it.

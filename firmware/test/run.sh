@@ -28,6 +28,7 @@ mutate no-pot-save PotentiometerLogic.cpp 's/NewMode == Mode::Uart || NewMode ==
 mutate no-boot-guard CommonLogic.cpp 's/if (getMode() == Mode::Boot)/if (false)/'
 mutate no-next-after-delete CommonLogic.cpp 's/^      Presets.next();$/      ;/'
 mutate w-not-saved CommonLogic.cpp '/setTuning/{n;d}'
+mutate no-junk-filter CommonLogic.cpp 's/!isprint((unsigned char)Byte)/Byte == 10/'
 mutate w-allows-max CommonLogic.cpp 's/if (Idx < 0 || KHz == Presets.getMaxKHz())/if (Idx < 0)/'
 for F in RotaryLogic PotentiometerLogic TwoButtonLogic; do
   mutate panel-reset-stale-$F $F.cpp '/Presets.resetToDefaults(Flash);/{n;d}'

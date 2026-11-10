@@ -81,6 +81,9 @@ int main() {
   Is("s33", "OK F=33.00 P=8 MAX=300 MODE=PRESETS");
   Is("F12345678901234567", "ERR TOOLONG");
   Is("?", "F=33.00 P=8 MAX=300 MODE=PRESETS");
+  // Null bytes, like those some serial ports send when opened, are ignored.
+  Is(std::string(2, '\0'), "");
+  Is(std::string(2, '\0') + "?", "F=33.00 P=8 MAX=300 MODE=PRESETS");
   printf("passed=%d failed=%d\n", Pass, Fail);
   return Fail != 0;
 }
