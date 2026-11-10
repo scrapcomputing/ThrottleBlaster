@@ -132,7 +132,7 @@ This helps revert the deleted presets or any potential flash-related issue.
  `M<MHz>`           | Set the maximum CPU frequency. Saved to flash.                    | `OK F=1200.00 P=8 MAX=1200 MODE=PRESETS`
  `R`                | Return to the presets and the front panel.                        | `OK F=133.00 P=8 MAX=1200 MODE=PRESETS`
  `W<MHz>`           | Save the current frequency and period to this preset.             | `OK F=4.50 P=16 MAX=1200 MODE=PRESETS`
- `D<MHz>`           | Delete this preset, or restore it if deleted.                     | `OK DELETED F=8.00 P=8 MAX=1200 MODE=PRESETS`
+ `D<MHz>`           | Delete this preset and select the next one, or restore it.        | `OK DELETED F=8.00 P=8 MAX=1200 MODE=PRESETS`
  `X`                | Reset to factory defaults, including the maximum.                 | `OK F=200.00 P=8 MAX=200 MODE=PRESETS`
  `?`                | Show the current state. Changes nothing.                          | `F=133.00 P=8 MAX=1200 MODE=PRESETS`
 
