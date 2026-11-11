@@ -94,6 +94,8 @@ void RotaryLogic::onSwLongPress() {
   case Mode::ResetToDefaults:
     setMode(Mode::Presets);
     Presets.resetToDefaults(Flash);
+    DC.setKHz(Presets.getActualKHz());
+    DC.setPeriod(Presets.getPeriod());
     printTxtAndSleep(MsgConfirm);
     Disp.setFlash(false);
     break;

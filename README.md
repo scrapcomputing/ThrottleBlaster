@@ -110,17 +110,47 @@ This helps revert the deleted presets or any potential flash-related issue.
 
 
 ### UART Software
-- Serial port settings: 9600 8N1, no flow control
-- The string to send is in the form `F<MHz>P<Period>\r`, where:
-  - `<MHz>` is the desired effective frequency in MHz (float),
-  - `<Period>` is the PWM Period level (1-256),
-  - `\r` (also seen as `^M`) is the Carriage-Return character (ASCII 13 0x0d).
-  - For example `F4.77P8` sets the frequency to `4.77MHz` and the PWM period to `8` which is a around 50us.
-- In DOS you can use a terminal emulator, like [Kermit](http://www.columbia.edu/kermit/ftp/archives/msk314.zip), to connect and send the command.
-  - You could use this one-liner in a batch file: `kermit set port COM1, set speed 9600, output F4.77P8\13`. This will set the frequency to 4.77 MHz, the period to 8 and will send a Carriage-Return character (`\13`).
+- Serial port settings: 9600 8N1, no flow control.
+- Commands:
+  - End each command with `\r`, the Carriage-Return (ASCII 13, also seen as `^M`).
+  - Upper and lower case both work.
+  - Non-printable characters, such as `\n` or `0x00`, are ignored.
+  - Wait for the reply before sending the next command.
+- Replies:
+  - One line per command, ending with `\r\n`.
+  - `OK <status>` on success, `ERR <reason>` on failure.
+  - Frequency changes reply after the 1 second display message, then take effect.
+- A serial command closes any open front panel menu.
 
-> **Note**
-> Changing the frequency is not instantaneous. So if you are setting the frequency in a batch file, please consider adding a delay before launching the game.
+ Command            | Description                                                       | Example reply
+--------------------|-------------------------------------------------------------------|---------------------------------------
+ `F<MHz>P<Period>`  | Run at this frequency (MHz, decimals allowed) and PWM period (1-256). | `OK F=4.77 P=8 MAX=1200 MODE=UART`
+ `F<MHz>`           | Same, but keep the current period.                                | `OK F=4.77 P=8 MAX=1200 MODE=UART`
+ `F0`               | Run at the maximum frequency.                                     | `OK F=1200.00 P=8 MAX=1200 MODE=UART`
+ `S<MHz>`           | Select a preset, like the preset buttons. For example `S4.77`.    | `OK F=4.77 P=8 MAX=1200 MODE=PRESETS`
+ `SMAX`             | Select the maximum frequency preset.                              | `OK F=1200.00 P=8 MAX=1200 MODE=PRESETS`
+ `M<MHz>`           | Set the maximum CPU frequency. Saved to flash.                    | `OK F=1200.00 P=8 MAX=1200 MODE=PRESETS`
+ `R`                | Return to the presets and the front panel.                        | `OK F=133.00 P=8 MAX=1200 MODE=PRESETS`
+ `W<MHz>`           | Save the current frequency and period to this preset.             | `OK F=4.50 P=16 MAX=1200 MODE=PRESETS`
+ `D<MHz>`           | Delete this preset and select the next one, or restore it.        | `OK DELETED F=8.00 P=8 MAX=1200 MODE=PRESETS`
+ `X`                | Reset to factory defaults, including the maximum.                 | `OK F=200.00 P=8 MAX=200 MODE=PRESETS`
+ `?`                | Show the current state. Changes nothing.                          | `F=133.00 P=8 MAX=1200 MODE=PRESETS`
+
+- `M`, `W`, `D` and `X` save to flash.
+- `MODE` is `PRESETS`, `MANUAL`, `UART`, `BOOT`, or `CONFIG` when a front panel menu is open.
+- Errors:
+  - `ERR SYNTAX`: unknown command.
+  - `ERR RANGE`: value out of range. The frequency can't exceed the maximum.
+  - `ERR NOPRESET`: no preset with that frequency. `W` and `D` can't change the maximum preset, use `M`.
+  - `ERR PERIOD`: period too short for this frequency, the CPU would freeze. Use a larger period.
+  - `ERR BOOT`: `W` sent during the temporary maximum speed after a reset.
+  - `ERR TOOLONG`: more than 16 characters.
+- Example: `F4.77P8` runs at 4.77 MHz with PWM period 8, around 50us.
+- In DOS, use [Kermit](http://www.columbia.edu/kermit/ftp/archives/msk314.zip):
+  - `kermit set port COM1, set speed 9600, output S4.77\13, input 3 \10` selects the 4.77 MHz preset.
+  - `\13` is the Carriage-Return that ends the command.
+  - `input 3 \10` waits up to 3 seconds for the reply line.
+  - [examples/THROTTLE.BAT](examples/THROTTLE.BAT) does this for any command, for example `THROTTLE S4.77`.
 
 > **Note**
 > Please note that the serial-port functionality is totally optional. You don't need to populate the MAX3232 IC and its capacitors if you are not planning to use it.

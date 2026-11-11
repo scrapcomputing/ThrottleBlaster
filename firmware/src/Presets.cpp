@@ -80,6 +80,10 @@ void PresetsTable::updateMaxMHz(int NewMaxMHz) {
   // Add a custom entry with the new Max value if required.
   if (Table.empty() || Table.back().PresetKHz != MaxKHz)
     Table.emplace_back(MaxKHz, MaxKHz, DefaultPeriod);
+  // The max preset must stay selectable and no preset can exceed the max.
+  Table.back().Deleted = false;
+  for (auto &E : Table)
+    E.ActualKHz = std::min(E.ActualKHz, MaxKHz);
   // Adjust the Idx to point to the last entry.
   Idx = (int)Table.size() - 1;
   // dump();

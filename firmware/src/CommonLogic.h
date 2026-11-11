@@ -96,9 +96,18 @@ protected:
 
   void updateDisplay();
 
-  static constexpr const size_t MaxUartStrSz = 10;
+  static constexpr const size_t MaxUartStrSz = 16;
   std::string UartStr;
+  /// Set when a command was too long: drop bytes until the next EOM.
+  bool UartDiscard = false;
   void uartTick(Uart &Uart);
+  /// Parses and executes a single serial command (without the EOM).
+  void handleUartCmd(Uart &Uart, const std::string &Cmd);
+  /// Sends "<Prefix>F=<MHz> P=<Period> MAX=<MaxMHz> MODE=<Mode>\r\n".
+  void sendUartStatus(Uart &Uart, const char *Prefix);
+  /// Selects a preset exactly like the preset buttons do.
+  /// If \p IsLast is true selects the maximum frequency preset.
+  void applyPreset(int Idx, bool IsLast);
   void presetBtnsTick();
   void resetSenseTick();
 

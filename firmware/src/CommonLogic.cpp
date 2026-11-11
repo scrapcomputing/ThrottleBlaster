@@ -1,6 +1,9 @@
 #include "CommonLogic.h"
 #include "Debug.h"
 #include "pico/time.h"
+#include <cctype>
+#include <cmath>
+#include <cstdio>
 #include <string>
 
 void CommonLogic::setMode(Mode NewMode) {
@@ -66,52 +69,207 @@ void CommonLogic::updateDisplay() {
 #endif
 }
 
-void CommonLogic::uartTick(Uart &Uart) {
-  auto Bytes = Uart.readNonBlocking();
-  auto NumBytes = Bytes.size();
-  if (NumBytes == 0)
-    return;
-  if (NumBytes >= 1) {
-    for (char Byte : Bytes) {
-      // Skip some illegal chars.
-      if (Byte == '\n')
-        continue;
-      UartStr += Byte;
-    }
+void CommonLogic::sendUartStatus(Uart &Uart, const char *Prefix) {
+  const char *ModeStr = "CONFIG";
+  switch (getMode()) {
+  case Mode::Presets: ModeStr = "PRESETS"; break;
+  case Mode::Manual: ModeStr = "MANUAL"; break;
+  case Mode::Uart: ModeStr = "UART"; break;
+  case Mode::Boot: ModeStr = "BOOT"; break;
+  default: break;
   }
-  DBG_PRINT(std::cout << "UartStr: " << UartStr << "\n";)
-  // Reject messages that are too long!
-  if (UartStr.size() > MaxUartStrSz) {
-    DBG_PRINT(std::cout << "Uart: Too many chars:'" << UartStr << "'\n";)
+  int KHz = DC.getKHz();
+  // DC stores the raw PIO period (256 * Period - 1).
+  int Period = (DC.getPeriod() + 1) / 256;
+  char Buff[64];
+  snprintf(Buff, sizeof(Buff), "%sF=%d.%02d P=%d MAX=%d MODE=%s\r\n", Prefix,
+           KHz / 1000, (KHz % 1000) / 10, Period, Presets.getMaxMHz(),
+           ModeStr);
+  Uart.writeBlockingStr(Buff);
+}
+
+void CommonLogic::handleUartCmd(Uart &Uart, const std::string &Cmd) {
+  auto Error = [this, &Uart](const char *Reason) {
+    DBG_PRINT(std::cout << "Uart: ERR " << Reason << "\n";)
     printTxtAndSleep(MsgUartErr);
-    UartStr.clear();
+    Uart.writeBlockingStr(std::string("ERR ") + Reason + "\r\n");
+  };
+  // Ends a command in Presets mode, running the selected preset. The serial
+  // port overrides any open menu, so make sure the display stops flashing.
+  auto ToPresets = [this, &Uart](const char *Msg, const char *Prefix = "OK ") {
+    Disp.setFlash(false);
+    setMode(Mode::Presets);
+    DC.setKHz(Presets.getActualKHz());
+    DC.setPeriod(Presets.getPeriod());
+    printTxtAndSleep(Msg);
+    sendUartStatus(Uart, Prefix);
+  };
+  const char *Str = Cmd.c_str();
+
+  // ? : Query. Reply immediately, nothing changes.
+  if (Cmd == "?") {
+    sendUartStatus(Uart, "");
     return;
   }
-  // Look for the EOM character.
-  if (UartStr.back() != UartEOM)
-    return;
-  float MHz = 0;
-  int Period = 0;
-  sscanf(UartStr.c_str(), "F%fP%d\r", &MHz, &Period);
-  int KHz = MHz * 1000;
-  DBG_PRINT(std::cout << "UART: "
-                      << "MHz=" << MHz << " KHz=" << KHz << " Period=" << Period
-                      << "\n";)
-  if (KHz == 0) {
-    setMode(Mode::Uart);
-    printTxtAndSleep(MsgUartMode);
-    DC.setMHzToMax();
-  } else if ((MHz >= MHzLimitLo && MHz <= MHzLimitHi) &&
-             (Period >= PeriodLimitLo && Period <= PeriodLimitHi)) {
+
+  // R : Return to the presets, like a short push in Manual mode.
+  if (Cmd == "R")
+    return ToPresets(MsgPresets);
+
+  // X : Reset to factory defaults, like confirming the reset menu.
+  if (Cmd == "X") {
+    Presets.resetToDefaults(Flash);
+    return ToPresets(MsgConfirm);
+  }
+
+  // SMAX : Select the max frequency preset, like the last preset button.
+  // S<MHz> : Select the preset with nominal frequency <MHz>, using its tuned
+  //          frequency and period, like the preset buttons.
+  if (Cmd[0] == 'S') {
+    if (Cmd == "SMAX") {
+      applyPreset(0, /*IsLast=*/true);
+    } else {
+      float MHz = 0;
+      int Len = 0;
+      if (sscanf(Str, "S%f%n", &MHz, &Len) != 1 || Str[Len] != '\0')
+        return Error("SYNTAX");
+      int Idx = Presets.findIdxByKHz((int)lroundf(MHz * 1000));
+      if (Idx < 0)
+        return Error("NOPRESET");
+      applyPreset(Idx, /*IsLast=*/false);
+    }
+    return ToPresets(MsgPresets);
+  }
+
+  // M<MHz> : Set the maximum CPU frequency and save it to flash, like
+  //          confirming the CPUF setting.
+  if (Cmd[0] == 'M') {
+    int MaxMHz = 0;
+    int Len = 0;
+    if (sscanf(Str, "M%d%n", &MaxMHz, &Len) != 1 || Str[Len] != '\0')
+      return Error("SYNTAX");
+    if (MaxMHz < MHzLimitLo || MaxMHz > MHzLimitHi)
+      return Error("RANGE");
+    // This also selects the max frequency preset.
+    Presets.updateMaxMHz(MaxMHz);
+    tryWritePresetsToFlash();
+    return ToPresets(MsgConfirm);
+  }
+
+  // W<MHz> : Store the current frequency and period in preset <MHz> and save
+  //          it to flash, like confirming the preset tuning menus.
+  // D<MHz> : Delete preset <MHz>, or restore it if it is already deleted.
+  // The max frequency preset can only be changed with M, like in the menus.
+  if (Cmd[0] == 'W' || Cmd[0] == 'D') {
+    bool IsDelete = Cmd[0] == 'D';
+    float MHz = 0;
+    int Len = 0;
+    if (sscanf(Str + 1, "%f%n", &MHz, &Len) != 1 || Str[1 + Len] != '\0')
+      return Error("SYNTAX");
+    int KHz = (int)lroundf(MHz * 1000);
+    int Idx = Presets.findIdxByKHz(KHz, /*IncludeDeleted=*/IsDelete);
+    if (Idx < 0 || KHz == Presets.getMaxKHz())
+      return Error("NOPRESET");
+    if (!IsDelete) {
+      // While booting the frequency is temporarily at max, don't store it.
+      if (getMode() == Mode::Boot)
+        return Error("BOOT");
+      if (DC.getKHz() < MHzLimitLo * 1000)
+        return Error("RANGE");
+      Presets.setIdx(Idx);
+      Presets.setTuning(DC.getKHz(), (DC.getPeriod() + 1) / 256);
+      tryWritePresetsToFlash();
+      return ToPresets(MsgConfirm);
+    }
+    Presets.setIdx(Idx);
+    Presets.toggleDeleted();
+    bool Deleted = Presets.isDeleted();
+    tryWritePresetsToFlash();
+    // Like the delete menu, move away from a preset that was just deleted.
+    if (Deleted)
+      Presets.next();
+    return ToPresets(MsgConfirm, Deleted ? "OK DELETED " : "OK RESTORED ");
+  }
+
+  // F<MHz>[P<Period>] : Set a raw frequency. F0 sets the max frequency.
+  //                     If P is missing, the current period is kept.
+  if (Cmd[0] == 'F') {
+    float MHz = 0;
+    int Len = 0;
+    if (sscanf(Str, "F%f%n", &MHz, &Len) != 1)
+      return Error("SYNTAX");
+    const char *Rest = Str + Len;
+    int Period = (DC.getPeriod() + 1) / 256;
+    bool HasPeriod = false;
+    if (*Rest == 'P') {
+      int PLen = 0;
+      if (sscanf(Rest, "P%d%n", &Period, &PLen) != 1)
+        return Error("SYNTAX");
+      Rest += PLen;
+      HasPeriod = true;
+    }
+    if (*Rest != '\0')
+      return Error("SYNTAX");
+    int KHz = (int)lroundf(MHz * 1000);
+    if (HasPeriod && (Period < PeriodLimitLo || Period > PeriodLimitHi))
+      return Error("RANGE");
+    if (KHz == 0) {
+      Disp.setFlash(false);
+      setMode(Mode::Uart);
+      printTxtAndSleep(MsgUartMode);
+      DC.setMHzToMax();
+      sendUartStatus(Uart, "OK ");
+      return;
+    }
+    if (MHz < MHzLimitLo || KHz > Presets.getMaxKHz())
+      return Error("RANGE");
+    // Reject combinations where the CPU would never run (it would freeze).
+    int RawPeriod = (1 << 8) * Period - 1;
+    if ((int64_t)KHz * RawPeriod / Presets.getMaxKHz() == 0)
+      return Error("PERIOD");
+    Disp.setFlash(false);
     setMode(Mode::Uart);
     DC.setKHz(KHz);
     DC.setPeriod(Period);
     printTxtAndSleep(MsgUartMode);
-    // Uart.writeBlockingStr("OK\r\n");
-  } else {
-    printTxtAndSleep(MsgUartErr);
+    sendUartStatus(Uart, "OK ");
+    return;
   }
-  UartStr.clear();
+
+  Error("SYNTAX");
+}
+
+void CommonLogic::uartTick(Uart &Uart) {
+  auto Bytes = Uart.readNonBlocking();
+  if (Bytes.empty())
+    return;
+  for (char Byte : Bytes) {
+    // Skip non-printable chars, such as '\n' or the 0x00 bytes that some
+    // serial ports send when they are opened or closed.
+    if (Byte != UartEOM && !isprint((unsigned char)Byte))
+      continue;
+    if (Byte != UartEOM) {
+      if (!UartDiscard)
+        UartStr += (char)toupper((unsigned char)Byte);
+      // Reject messages that are too long!
+      if (UartStr.size() > MaxUartStrSz) {
+        DBG_PRINT(std::cout << "Uart: Too many chars:'" << UartStr << "'\n";)
+        UartStr.clear();
+        UartDiscard = true;
+      }
+      continue;
+    }
+    // Got the EOM character.
+    DBG_PRINT(std::cout << "UartStr: " << UartStr << "\n";)
+    if (UartDiscard) {
+      printTxtAndSleep(MsgUartErr);
+      Uart.writeBlockingStr("ERR TOOLONG\r\n");
+    } else if (!UartStr.empty()) {
+      handleUartCmd(Uart, UartStr);
+    }
+    UartStr.clear();
+    UartDiscard = false;
+  }
 }
 
 void CommonLogic::resetSenseTick() {
@@ -149,28 +307,31 @@ void CommonLogic::resetSenseTick() {
   setMode(Mode::Boot);
 }
 
+void CommonLogic::applyPreset(int Idx, bool IsLast) {
+  if (!IsLast)
+    Presets.setIdx(Idx);
+  else
+    // The last preset always sets max frequency.
+    Presets.cycleMax();
+  int NewKHz = Presets.getActualKHz();
+  int NewPeriod = Presets.getPeriod();
+  DBG_PRINT(std::cout << "NewKHz=" << NewKHz << " NewPeriod=" << NewPeriod
+                      << "\n";)
+  DC.setKHz(NewKHz);
+  DC.setPeriod(NewPeriod);
+  DBG_PRINT(DC.dump();)
+}
+
 void CommonLogic::presetBtnsTick() {
   auto HandleBtn = [this](auto &Btn, int BtnIdx, bool IsLast) {
     switch (Btn.get()) {
     case ButtonState::Release:
     case ButtonState::MedRelease:
-    case ButtonState::LongPress: {
+    case ButtonState::LongPress:
       DBG_PRINT(std::cout << "PresetBtn " << BtnIdx << " IsLast=" << IsLast
                           << "\n";)
-      if (!IsLast)
-        Presets.setIdx(BtnIdx);
-      else
-        // The last preset always sets max frequency.
-        Presets.cycleMax();
-      int NewKHz = Presets.getActualKHz();
-      int NewPeriod = Presets.getPeriod();
-      DBG_PRINT(std::cout << "NewKHz=" << NewKHz << " NewPeriod=" << NewPeriod
-                          << "\n";)
-      DC.setKHz(NewKHz);
-      DC.setPeriod(NewPeriod);
-      DBG_PRINT(DC.dump();)
+      applyPreset(BtnIdx, IsLast);
       break;
-    }
     default:
       break;
     }

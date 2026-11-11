@@ -232,6 +232,7 @@ int main() {
   ThrottlePin TPin(Pico, DC);
   Pico.ledON();
   DC.setKHz(Presets.getKHz());
+  DC.setPeriod(Presets.getPeriod());
   while (true) {
     // The main entry point for the UI.
     UI->tickAll(Uart);

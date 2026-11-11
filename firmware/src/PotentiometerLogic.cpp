@@ -162,6 +162,8 @@ void PotentiometerLogic::configResetToDefaults(int PotVal,
     break;
   case ButtonState::LongPress:
     Presets.resetToDefaults(Flash);
+    DC.setKHz(Presets.getActualKHz());
+    DC.setPeriod(Presets.getPeriod());
     Disp.setFlash(false);
     printTxtAndSleep(MsgConfirm);
     savePotVal(PotVal);
@@ -244,7 +246,9 @@ void PotentiometerLogic::configMHz(int PotVal, ButtonState BtnState) {
 }
 
 void PotentiometerLogic::setModeInit(Mode NewMode) {
-  if (NewMode == Mode::Uart) {
+  // Remember the pot position so that it won't override a frequency set by the
+  // serial port. It takes over again only once the pot is actually moved.
+  if (NewMode == Mode::Uart || NewMode == Mode::Presets) {
     savePotVal(Pot.get());
   }
 }
